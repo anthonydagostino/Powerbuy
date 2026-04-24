@@ -1,0 +1,6 @@
+@Powerbuy.Api_HostAddress = http://localhost:5053
+
+GET {{Powerbuy.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

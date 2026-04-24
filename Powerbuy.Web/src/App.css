@@ -1,0 +1,280 @@
+:root {
+  --bg: #8b8a8a;
+  --panel: #74939b;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #d1d5db;
+  --table-head: #111827;
+  --table-head-text: #070707;
+  --input-bg: #ffffff;
+}
+
+body.dark {
+  --bg: #000000;
+  --panel: #111827;
+  --text: #f9fafb;
+  --muted: #cbd5e1;
+  --border: #334155;
+  --table-head: #020617;
+  --table-head-text: #f9fafb;
+  --input-bg: #1f2937;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+.app-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.panel,
+.summary-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+}
+
+input,
+select {
+  padding: 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: var(--text);
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.primary-button {
+  background: #2563eb;
+  color: white;
+}
+
+.secondary-button {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.theme-button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.filter-button {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.calculation-box {
+  grid-column: span 3;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #111827;
+}
+
+body.dark .calculation-box {
+  background: #1e3a8a;
+  border-color: #60a5fa;
+  color: #f9fafb;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+
+.summary-card {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.summary-card strong {
+  color: var(--muted);
+}
+
+.summary-value {
+  color: var(--text);
+}
+
+.summary-value {
+  font-size: 1.35rem;
+  font-weight: bold;
+}
+
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th {
+  background: var(--table-head);
+  color: var(--table-head-text);
+}
+
+th,
+td {
+  padding: 0.7rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  color: var(--text);
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.status-paid,
+.status-delivered {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-not-paid,
+.status-not-delivered {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-refunded {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* Dropdown text colors */
+.dropdown-amazon { color: #1100ff; font-weight: bold; }
+.dropdown-walmart { color: #00a2ff; font-weight: bold; }
+.dropdown-target { color: #d4ff37; font-weight: bold; }
+.dropdown-bestbuy { color: #ca8a04; font-weight: bold; }
+.dropdown-staples { color: #7c3aed; font-weight: bold; }
+.dropdown-costco { color: #047857; font-weight: bold; }
+
+
+.dropdown-issue { color: #ff0000; font-weight: bold; }
+.status-issue { background: #ff0000; color: #991b1b; }
+
+/* HALF = ORANGE (clean + readable) */
+.dropdown-half { color: #ff9900; font-weight: bold; }
+.status-half { background: #fbfee9; color: #ff9900; }
+
+.row-half td { background: #ff9100; color: #111827; }
+
+.dropdown-amex-gold { color: #ffd82a; font-weight: bold; }
+.dropdown-prime { color: #3700ff; font-weight: bold; }
+.dropdown-discover { color: #ea580c; font-weight: bold; }
+.dropdown-amex-platinum { color: #64748b; font-weight: bold; }
+
+.dropdown-delivered { color: #a1cfb2; font-weight: bold; }
+.dropdown-not-delivered { color: #dc2626; font-weight: bold; }
+.dropdown-refunded { color: #6b7280; font-weight: bold; }
+
+.dropdown-paid { color: #16a34a; font-weight: bold; }
+.dropdown-not-paid { color: #dc2626; font-weight: bold; }
+
+/* Row highlighting that still stays readable */
+.row-refunded td {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.row-expiring td {
+  background: #fecaca;
+  color: #111827;
+}
+
+.row-not-paid td {
+  background: #ff4d4d;
+  color: #111827;
+}
+
+.row-paid-not-delivered td {
+  background: #00ff59;   /* light green */
+  color: #166534;        /* dark green text */
+}
+
+.row-not-delivered td {
+  background: #c4a93e;
+  color: #111827;
+}
+
+body.dark .summary-card {
+  background: #111827;
+  color: #e5e7eb;
+  border-color: #334155;
+}
+
+body.dark .summary-card strong {
+  color: #93c5fd;
+}
+
+body.dark .summary-value {
+  color: #22c55e;
+}
