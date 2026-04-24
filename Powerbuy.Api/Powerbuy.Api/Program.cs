@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Powerbuy.Api.Data;
+using Powerbuy.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<ReceiptService>();
 
 builder.Services.AddCors(options =>
 {
