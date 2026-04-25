@@ -47,4 +47,7 @@ public class Purchase
     public int QuantityPaid { get; set; }
 
     public decimal AmountPaid { get; set; }
+
+
+    public string UserId { get; set; } = string.Empty;
 }
