@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5053/api/Purchases";
+const API_URL = "https://powerbuy.onrender.com/api/Purchases";
 
 export async function getPurchases() {
   const response = await fetch(API_URL);

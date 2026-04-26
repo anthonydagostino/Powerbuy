@@ -83,7 +83,6 @@ export function buildPurchasePayload(form) {
   const profit7 = selectedRate === 7 ? sell - total + cashback7 : 0;
 
   return {
-    id: form.id,
     item: form.item,
     totalAmazon: total,
     sellPrice: sell,
