@@ -13,6 +13,19 @@ Built with:
 - xUnit tests for receipt/payment logic
 
 ---
+## How to Use
+
+### Option 1: Use the Live App (Recommended)
+
+Open the app in your browser:
+https://YOUR-VERCEL-URL.vercel.app
+
+1. Sign in (if authentication is enabled)
+2. Fill out the form at the top
+3. Click **Add Purchase**
+4. Track your purchases, payments, and profit in the table below
+
+---
 
 ## Features
 
