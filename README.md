@@ -18,7 +18,7 @@ Built with:
 Use the Live App (Recommended)
 
 Open the app in your browser:
-https://YOUR-VERCEL-URL.vercel.app
+https://powerbuy.vercel.app
 
 1. Sign in (if authentication is enabled)
 2. Fill out the form at the top
