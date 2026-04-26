@@ -15,7 +15,7 @@ Built with:
 ---
 ## How to Use
 
-### Option 1: Use the Live App (Recommended)
+Use the Live App (Recommended)
 
 Open the app in your browser:
 https://YOUR-VERCEL-URL.vercel.app
