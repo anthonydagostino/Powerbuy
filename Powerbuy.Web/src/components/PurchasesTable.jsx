@@ -7,64 +7,75 @@ function PurchasesTable({
 }) {
   return (
     <>
-      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-        <thead>
-          <tr>
-            <th style={cellStyle}>Id</th>
-            <th style={cellStyle}>Item</th>
-            <th style={cellStyle}>UPC</th>
-            <th style={cellStyle}>Model</th>
-            <th style={cellStyle}>Quantity</th>
-            <th style={cellStyle}>Total Amazon</th>
-            <th style={cellStyle}>Sell Price</th>
-            <th style={cellStyle}>Expires</th>
-            <th style={cellStyle}>Delivery</th>
-            <th style={cellStyle}>Payment</th>
-            <th style={cellStyle}>Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {filteredPurchases.map((purchase) => (
-            <tr key={purchase.id} className={getRowClassName(purchase)}>
-              <td style={cellStyle}>{purchase.id}</td>
-              <td style={cellStyle}>{purchase.item}</td>
-              <td style={cellStyle}>{purchase.upc}</td>
-              <td style={cellStyle}>{purchase.model}</td>
-              <td style={cellStyle}>{purchase.quantity}</td>
-              <td style={cellStyle}>{purchase.totalAmazon}</td>
-              <td style={cellStyle}>{purchase.sellPrice}</td>
-              <td style={cellStyle}>{toDateInputValue(purchase.expires)}</td>
-              <td style={cellStyle}>{purchase.deliveryStatus}</td>
-              <td style={cellStyle}>{purchase.paymentStatus}</td>
-              <td style={cellStyle}>
-                <button onClick={() => handleEditClick(purchase)} style={{ marginRight: "0.5rem" }}>
-                  Edit
-                </button>
-                <button onClick={() => handleDeleteClick(purchase.id)}>
-                  Delete
-                </button>
-              </td>
+      <div className="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Item</th>
+              <th>UPC</th>
+              <th>Model</th>
+              <th>Qty</th>
+              <th>Total Amazon</th>
+              <th>Sell Price</th>
+              <th>Expires</th>
+              <th>Delivery</th>
+              <th>Payment</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
 
-      <div style={{ marginTop: "1rem", fontSize: "0.95rem" }}>
-        <strong>Row Colors:</strong>
-        <div>Red = expiring soon and not delivered</div>
-        <div>Light red = not paid</div>
-        <div>Yellow = not delivered</div>
-        <div>Gray = refunded</div>
+          <tbody>
+            {filteredPurchases.map((purchase) => (
+              <tr key={purchase.id} className={getRowClassName(purchase)}>
+                <td>{purchase.id}</td>
+                <td>{purchase.item}</td>
+                <td>{purchase.upc}</td>
+                <td>{purchase.model}</td>
+                <td>{purchase.quantity}</td>
+                <td>{purchase.totalAmazon}</td>
+                <td>{purchase.sellPrice}</td>
+                <td>{toDateInputValue(purchase.expires)}</td>
+                <td>{purchase.deliveryStatus}</td>
+                <td>{purchase.paymentStatus}</td>
+                <td>
+                  <button className="btn-edit" onClick={() => handleEditClick(purchase)}>Edit</button>
+                  <button className="btn-delete" onClick={() => handleDeleteClick(purchase.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="color-legend">
+        <span className="legend-item">
+          <span className="legend-dot" style={{ background: "#fee2e2" }} />
+          Not Paid
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot" style={{ background: "#fef2f2" }} />
+          Expiring Soon
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot" style={{ background: "#fef9c3" }} />
+          Not Delivered
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot" style={{ background: "#dcfce7" }} />
+          Paid / Not Delivered
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot" style={{ background: "#fff7ed" }} />
+          Half Paid
+        </span>
+        <span className="legend-item">
+          <span className="legend-dot" style={{ background: "#f8fafc" }} />
+          Refunded
+        </span>
       </div>
     </>
   );
 }
-
-const cellStyle = {
-  border: "1px solid #ccc",
-  padding: "0.5rem",
-  textAlign: "left"
-};
 
 export default PurchasesTable;
