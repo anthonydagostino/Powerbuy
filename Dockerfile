@@ -1,23 +1,23 @@
-# Use the STABLE .NET 8 SDK
+# Use Stable .NET 8
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Keep your working paths
-COPY ["Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj", "Powerbuy.Api/Powerbuy.Api/"]
-RUN dotnet restore "Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj"
-
+# 1. Copy everything in the repo
 COPY . .
-WORKDIR "/src/Powerbuy.Api/Powerbuy.Api"
-RUN dotnet publish "Powerbuy.Api.csproj" -c Release -o /app/publish
 
-# Use the STABLE .NET 8 Runtime
+# 2. Automatically find the .csproj file no matter where it is
+# then restore and publish it to /app/publish
+RUN PROJECT_FILE=$(find . -name "Powerbuy.Api.csproj" -print -quit) && \
+    dotnet publish "$PROJECT_FILE" -c Release -o /app/publish
+
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-
-# Clean up: You shouldn't need the manual apt-get install on .NET 8
 COPY --from=build /app/publish .
 
+# Render defaults
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
+# This must match your output DLL name
 ENTRYPOINT ["dotnet", "Powerbuy.Api.dll"]
