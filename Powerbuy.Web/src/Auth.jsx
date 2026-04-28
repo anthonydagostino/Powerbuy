@@ -25,36 +25,37 @@ export default function Auth({ onLoginSuccess }) {
   }
 
   return (
-    <div className="panel" style={{ maxWidth: 400, margin: '0 auto' }}>
-      <h2>{mode === 'login' ? 'Log In' : 'Register'}</h2>
-      <form onSubmit={handleSubmit} className="form-grid">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-        />
-        {error && <p style={{ color: 'red', gridColumn: 'span 2' }}>{error}</p>}
-        <button type="submit" disabled={loading} className="primary-button" style={{ gridColumn: 'span 2' }}>
-          {loading ? 'Please wait...' : mode === 'login' ? 'Log In' : 'Register'}
-        </button>
-        <button
-          type="button"
-          className="secondary-button"
-          style={{ gridColumn: 'span 2' }}
-          onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}
-        >
-          {mode === 'login' ? 'Need an account? Register' : 'Have an account? Log In'}
-        </button>
-      </form>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+      <div className="panel" style={{ width: '100%', maxWidth: 420 }}>
+        <h2 style={{ marginBottom: '1.5rem' }}>{mode === 'login' ? 'Log In' : 'Register'}</h2>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            required
+          />
+          {error && <p style={{ color: '#ef4444', margin: 0, fontSize: '0.875rem' }}>{error}</p>}
+          <button type="submit" disabled={loading} className="primary-button" style={{ marginTop: '0.25rem' }}>
+            {loading ? 'Please wait...' : mode === 'login' ? 'Log In' : 'Register'}
+          </button>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}
+          >
+            {mode === 'login' ? 'Need an account? Register' : 'Have an account? Log In'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
