@@ -25,6 +25,24 @@ namespace Powerbuy.Api.Migrations
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
+            // =========================================================================
+            // CUSTOM SQL: Fix for existing Purchases before the Foreign Key is applied
+            // =========================================================================
+
+            // 1. Create a dummy/default user to own the old records
+            migrationBuilder.Sql(
+                "INSERT INTO \"Users\" (\"Id\", \"Email\", \"PasswordHash\", \"CreatedAt\") " +
+                "VALUES ('default-system-user', 'system@powerbuy.local', 'NO_LOGIN_ALLOWED', NOW());"
+            );
+
+            // 2. Assign all existing purchases to this new default user
+            migrationBuilder.Sql(
+                "UPDATE \"Purchases\" SET \"UserId\" = 'default-system-user' " +
+                "WHERE \"UserId\" IS NULL OR \"UserId\" NOT IN (SELECT \"Id\" FROM \"Users\");"
+            );
+
+            // =========================================================================
+
             migrationBuilder.CreateIndex(
                 name: "IX_Purchases_UserId",
                 table: "Purchases",
