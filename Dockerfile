@@ -2,26 +2,25 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy project files and restore dependencies first.
-# This step is cached by Docker and only re-runs if the project files change.
+# 1. Copy ONLY the API project file to restore dependencies
 COPY ["Powerbuy.Api/Powerbuy.Api.csproj", "Powerbuy.Api/"]
-COPY ["Powerbuy.Web/Powerbuy.Web.csproj", "Powerbuy.Web/"]
 
-# It's also good practice to copy the solution file if you have one, e.g.:
-# COPY YourSolution.sln .
-
+# 2. Restore dependencies for the API
 RUN dotnet restore "Powerbuy.Api/Powerbuy.Api.csproj"
 
-# Now, copy the rest of the application's code
+# 3. Copy the rest of the application's code
 COPY . .
 
-# Publish the application (using --no-restore because we already restored)
+# 4. Publish the application
 RUN dotnet publish "Powerbuy.Api/Powerbuy.Api.csproj" -c Release -o /app/publish --no-restore
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+
+# Render usually assigns a PORT env var; 8080 is a safe default
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
+
 ENTRYPOINT ["dotnet", "Powerbuy.Api.dll"]
