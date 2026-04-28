@@ -54,12 +54,12 @@ function PurchaseForm({
           required
           className={`dropdown-${formatClassName(form.boughtFrom)}`}
         >
-          <option value="Amazon">Amazon</option>
-          <option value="Walmart">Walmart</option>
-          <option value="Target">Target</option>
-          <option value="BestBuy">BestBuy</option>
-          <option value="Staples">Staples</option>
-          <option value="Costco">Costco</option>
+          <option value="Amazon"  style={{ color: "#ea580c" }}>Amazon</option>
+          <option value="Walmart" style={{ color: "#2563eb" }}>Walmart</option>
+          <option value="Target"  style={{ color: "#dc2626" }}>Target</option>
+          <option value="BestBuy" style={{ color: "#ca8a04" }}>BestBuy</option>
+          <option value="Staples" style={{ color: "#7c3aed" }}>Staples</option>
+          <option value="Costco"  style={{ color: "#059669" }}>Costco</option>
         </select>
 
         <select
@@ -69,30 +69,30 @@ function PurchaseForm({
           required
           className={`dropdown-${formatClassName(form.cardUsed)}`}
         >
-          <option value="AMEX Gold">AMEX Gold</option>
-          <option value="Prime">Prime</option>
-          <option value="Discover">Discover</option>
-          <option value="AMEX Platinum">AMEX Platinum</option>
+          <option value="AMEX Gold"      style={{ color: "#b45309" }}>AMEX Gold</option>
+          <option value="Prime"          style={{ color: "#4f46e5" }}>Prime</option>
+          <option value="Discover"       style={{ color: "#ea580c" }}>Discover</option>
+          <option value="AMEX Platinum"  style={{ color: "#475569" }}>AMEX Platinum</option>
         </select>
 
         <select name="deliveryStatus" value={form.deliveryStatus} onChange={handleChange} required className={`dropdown-${formatClassName(form.deliveryStatus)}`}>
-          <option value="Delivered">Delivered</option>
-          <option value="Not Delivered">Not Delivered</option>
-          <option value="Refunded">Refunded</option>
+          <option value="Delivered"     style={{ color: "#16a34a" }}>Delivered</option>
+          <option value="Not Delivered" style={{ color: "#dc2626" }}>Not Delivered</option>
+          <option value="Refunded"      style={{ color: "#6b7280" }}>Refunded</option>
         </select>
 
         <select
-        name="paymentStatus"
-        value={form.paymentStatus}
-        onChange={handleChange}
-        required
-        className={`dropdown-${formatClassName(form.paymentStatus)}`}
+          name="paymentStatus"
+          value={form.paymentStatus}
+          onChange={handleChange}
+          required
+          className={`dropdown-${formatClassName(form.paymentStatus)}`}
         >
-        <option value="Paid">Paid</option>
-        <option value="Not Paid">Not Paid</option>
-        <option value="Half">Half</option>
-        <option value="Issue">Issue</option>
-        <option value="Refunded">Refunded</option>
+          <option value="Paid"      style={{ color: "#16a34a" }}>Paid</option>
+          <option value="Not Paid"  style={{ color: "#dc2626" }}>Not Paid</option>
+          <option value="Half"      style={{ color: "#d97706" }}>Half</option>
+          <option value="Issue"     style={{ color: "#dc2626" }}>Issue</option>
+          <option value="Refunded"  style={{ color: "#6b7280" }}>Refunded</option>
         </select>
 
         <div>
