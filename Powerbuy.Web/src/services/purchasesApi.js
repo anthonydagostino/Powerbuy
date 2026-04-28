@@ -6,7 +6,10 @@ export async function getPurchases(token) {
       Authorization: `Bearer ${token}`
     }
   });
-  return res.json();
+  
+  // Safely parse JSON only if the response is OK
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  return res.status === 204 ? null : await res.json();
 }
 
 export async function createPurchase(purchase, token) {
@@ -18,7 +21,9 @@ export async function createPurchase(purchase, token) {
     },
     body: JSON.stringify(purchase)
   });
-  return res.json();
+  
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  return res.status === 204 ? null : await res.json();
 }
 
 export async function updatePurchase(id, purchase, token) {
@@ -30,14 +35,22 @@ export async function updatePurchase(id, purchase, token) {
     },
     body: JSON.stringify(purchase)
   });
-  return res.json();
+  
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  return res.status === 204 ? null : await res.json();
 }
 
 export async function deletePurchase(id, token) {
-  await fetch(`${API_BASE_URL}/api/purchases/${id}`, {
+  const res = await fetch(`${API_BASE_URL}/api/purchases/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`
     }
   });
+
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  
+  // A DELETE request almost always returns 204 No Content. 
+  // We don't even try to call res.json() here.
+  return; 
 }
