@@ -1,25 +1,20 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Copy everything
+COPY ["Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj", "Powerbuy.Api/Powerbuy.Api/"]
+RUN dotnet restore "Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj"
+
 COPY . .
+WORKDIR "/src/Powerbuy.Api/Powerbuy.Api"
+RUN dotnet publish "Powerbuy.Api.csproj" -c Release -o /app/publish
 
-# 1. DEBUG: List all files and folders to the Render logs
-# This will show us EXACTLY where your project file is.
-RUN echo "--- DIRECTORY STRUCTURE ---" && ls -R && echo "--------------------------"
-
-# 2. Use a Case-Insensitive find to locate and copy the file
-RUN find . -iname "Powerbuy.Api.csproj" -exec cp {} . \;
-
-# 3. Build and Publish
-RUN dotnet publish -c Release -o /app/publish
-
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgssapi-krb5-2 \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY --from=build /app/publish .
 
 ENV ASPNETCORE_URLS=http://+:8080
-EXPOSE 8080
-
-ENTRYPOINT ["dotnet", "Powerbuy.Api.dll"]
