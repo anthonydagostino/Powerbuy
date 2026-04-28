@@ -2,21 +2,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy EVERYTHING from the repo to ensure we have all files 
+# 1. Copy the entire repository
 COPY . .
 
-# 1. Find the .csproj file automatically
-# 2. Store the path in a variable
-# 3. Publish using that path
-RUN PROJECT_FILE=$(find . -name "Powerbuy.Api.csproj" -print -quit) && \
-    dotnet publish "$PROJECT_FILE" -c Release -o /app/publish
+# 2. Navigate to the project folder (Exactly as it appears on GitHub)
+WORKDIR "/src/Powerbuy.Api/Powerbuy.Api"
+
+# 3. Build and Publish using the local file name
+RUN dotnet publish "Powerbuy.Api.csproj" -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Render defaults
+# Render requirements
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
