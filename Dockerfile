@@ -1,17 +1,18 @@
-# Use .NET 8 SDK
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# 1. Copy everything
+# Copy everything
 COPY . .
 
-# 2. Find the project file and move it to the current directory
-# This eliminates all pathing issues
-RUN find . -name "Powerbuy.Api.csproj" -exec cp {} . \;
+# 1. DEBUG: List all files and folders to the Render logs
+# This will show us EXACTLY where your project file is.
+RUN echo "--- DIRECTORY STRUCTURE ---" && ls -R && echo "--------------------------"
 
-# 3. Restore and Publish from the current flat directory
-RUN dotnet restore "Powerbuy.Api.csproj"
-RUN dotnet publish "Powerbuy.Api.csproj" -c Release -o /app/publish
+# 2. Use a Case-Insensitive find to locate and copy the file
+RUN find . -iname "Powerbuy.Api.csproj" -exec cp {} . \;
+
+# 3. Build and Publish
+RUN dotnet publish -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
