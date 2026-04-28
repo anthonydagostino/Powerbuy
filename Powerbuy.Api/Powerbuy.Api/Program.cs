@@ -63,6 +63,17 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+
+
+// ADD THIS LINE FOR DEBUGGING:
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"[INCOMING REQUEST] {context.Request.Method} {context.Request.Path}");
+    await next();
+});
+
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
