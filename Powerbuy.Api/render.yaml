@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: powerbuy-api
+    plan: free
+    runtime: dotnet
+    runtimeVersion: 10.0
+    buildCommand: dotnet publish -c Release -o /app
+    startCommand: dotnet Powerbuy.Api.dll
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Jwt__Secret
+        value: your-super-secret-key-change-this-in-production-at-least-32-characters-long-for-security
+      - key: Jwt__Issuer
+        value: Powerbuy.Api
+      - key: Jwt__Audience
+        value: Powerbuy.Client
+      - key: Seeding__Email
+        value: you@example.com
+      - key: Seeding__Password
+        value: ChangeMe123!
+      - key: ConnectionStrings__DefaultConnection
+        value: your-postgres-connection-string-here

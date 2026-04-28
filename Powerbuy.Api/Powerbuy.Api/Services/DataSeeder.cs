@@ -5,24 +5,30 @@ namespace Powerbuy.Api.Services;
 
 public class DataSeeder
 {
-    public static async Task SeedAsync(AppDbContext context)
+    public static async Task SeedAsync(AppDbContext context, IConfiguration configuration)
     {
-        // Check if we've already migrated data
-        if (!context.Database.CanConnect())
+        try
         {
-            await context.Database.EnsureCreatedAsync();
-        }
+            // Check if we've already migrated data
+            if (!context.Database.CanConnect())
+            {
+                await context.Database.EnsureCreatedAsync();
+            }
 
-        // Create your personal account if it doesn't exist
-        var personalUserEmail = "you@example.com"; // Change this to your email
-        var existingUser = context.Users.FirstOrDefault(u => u.Email == personalUserEmail);
+            // Only seed if Users table is empty
+            if (context.Users.Any())
+            {
+                return; // Data already seeded
+            }
 
-        if (existingUser == null)
-        {
+            // Create your personal account if it doesn't exist
+            var personalUserEmail = configuration["Seeding:Email"] ?? "you@example.com";
+            var personalUserPassword = configuration["Seeding:Password"] ?? "ChangeMe123!";
+
             var personalUser = new User
             {
                 Email = personalUserEmail,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("ChangeMe123!") // Change this password!
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(personalUserPassword)
             };
 
             context.Users.Add(personalUser);
@@ -39,6 +45,11 @@ public class DataSeeder
             }
 
             await context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            // Log seeding errors but don't crash the app
+            Console.WriteLine($"Seeding error: {ex.Message}");
         }
     }
 }
