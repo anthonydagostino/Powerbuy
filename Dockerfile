@@ -1,25 +1,26 @@
-# Use STABLE .NET 8
+# Use .NET 8 (Standard Stable version)
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Use the exact paths that worked in your "10.0" attempt
-COPY ["Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj", "Powerbuy.Api/Powerbuy.Api/"]
-RUN dotnet restore "Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj"
-
+# 1. Copy the entire repository
 COPY . .
-WORKDIR "/src/Powerbuy.Api/Powerbuy.Api"
-RUN dotnet publish "Powerbuy.Api.csproj" -c Release -o /app/publish
 
-# Use STABLE .NET 8 Runtime
+# 2. MOVE the "working room" to exactly where your project file is
+# Based on your GitHub link, this is the path
+WORKDIR "/src/Powerbuy.Api/Powerbuy.Api"
+
+# 3. Now that we are IN the folder, we don't need paths. 
+# We just say "restore" and "publish"
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app/publish
+
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-
-# Copy the build output
 COPY --from=build /app/publish .
 
-# Standard Render port setup
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-# This MUST match the actual name of your compiled DLL
+# This runs your app
 ENTRYPOINT ["dotnet", "Powerbuy.Api.dll"]
