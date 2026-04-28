@@ -1,23 +1,18 @@
+# Use .NET 8 SDK
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# 1. Copy the entire repo into the container
+# Since Root Directory is set, 'COPY .' only grabs the project folder
 COPY . .
 
-# 2. List the files so we can see them in the logs (for debugging)
-RUN ls -R
+# Now we can run commands normally
+RUN dotnet restore "Powerbuy.Api.csproj"
+RUN dotnet publish "Powerbuy.Api.csproj" -c Release -o /app/publish
 
-# 3. Try to restore using the FULL path from the root
-# Note: No variables, no find command. Just the hard path.
-RUN dotnet restore "Powerbuy/Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj"
-
-# 4. Build and Publish
-RUN dotnet publish "Powerbuy/Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj" -c Release -o out
-
-# 5. Final Stage
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-COPY --from=build /app/out .
+COPY --from=build /app/publish .
 
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
