@@ -4,7 +4,8 @@ import DashboardCards from "./components/DashboardCards";
 import PurchaseFilters from "./components/PurchaseFilters";
 import PurchaseForm from "./components/PurchaseForm";
 import PurchasesTable from "./components/PurchasesTable";
-import Auth from "./Auth"; // <-- Added the new Auth component import
+import Auth from "./Auth";
+import ReceiptUpload from "./components/ReceiptUpload";
 import {
   CURRENT_PROFIT_BASELINE_KEY,
   emptyForm,
@@ -248,6 +249,8 @@ function App() {
           </button>
         </div>
       </div>
+      <ReceiptUpload token={token} onProcessed={loadPurchases} />
+
       <PurchaseForm
         form={form}
         isEditing={isEditing}

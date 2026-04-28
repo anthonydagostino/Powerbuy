@@ -13,7 +13,7 @@ public class ReceiptService
         _context = context;
     }
 
-    public async Task<List<object>> ProcessReceiptAsync(ReceiptProcessRequest request)
+    public async Task<List<object>> ProcessReceiptAsync(ReceiptProcessRequest request, string userId)
     {
         var results = new List<object>();
 
@@ -22,7 +22,7 @@ public class ReceiptService
             var normalizedUpc = NormalizeDigits(item.Upc);
 
             var candidatePurchases = await _context.Purchases
-                .Where(p => p.PaymentStatus == "Not Paid" || p.PaymentStatus == "Half")
+                .Where(p => p.UserId == userId && (p.PaymentStatus == "Not Paid" || p.PaymentStatus == "Half"))
                 .ToListAsync();
 
             var purchase = candidatePurchases
