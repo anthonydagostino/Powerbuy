@@ -9,5 +9,19 @@ public class AppDbContext : DbContext
     {
     }
 
+    public DbSet<User> Users => Set<User>();
+
     public DbSet<Purchase> Purchases => Set<Purchase>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Configure foreign key relationship
+        modelBuilder.Entity<Purchase>()
+            .HasOne<User>()
+            .WithMany(u => u.Purchases)
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+    }
 }

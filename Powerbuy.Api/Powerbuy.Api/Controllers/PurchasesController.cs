@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Powerbuy.Api.Data;
 using Powerbuy.Api.Models;
+using System.Security.Claims;
 
 namespace Powerbuy.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class PurchasesController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -123,6 +126,6 @@ public class PurchasesController : ControllerBase
 
     private string GetUserId()
     {
-        return "test-user";
+        return User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new InvalidOperationException("User ID not found in token.");
     }
 }
