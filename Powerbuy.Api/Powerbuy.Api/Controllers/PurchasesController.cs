@@ -73,9 +73,29 @@ public class PurchasesController : ControllerBase
             return NotFound();
         }
 
-        updatedPurchase.UserId = currentUserId;
-
-        _context.Entry(existingPurchase).CurrentValues.SetValues(updatedPurchase);
+        existingPurchase.Item = updatedPurchase.Item;
+        existingPurchase.TotalAmazon = updatedPurchase.TotalAmazon;
+        existingPurchase.SellPrice = updatedPurchase.SellPrice;
+        existingPurchase.Cashback5Percent = updatedPurchase.Cashback5Percent;
+        existingPurchase.Cashback6Percent = updatedPurchase.Cashback6Percent;
+        existingPurchase.Cashback7Percent = updatedPurchase.Cashback7Percent;
+        existingPurchase.Profit5Percent = updatedPurchase.Profit5Percent;
+        existingPurchase.Profit6Percent = updatedPurchase.Profit6Percent;
+        existingPurchase.Profit7Percent = updatedPurchase.Profit7Percent;
+        existingPurchase.OrderPlaced = updatedPurchase.OrderPlaced;
+        existingPurchase.Quantity = updatedPurchase.Quantity;
+        existingPurchase.Expires = updatedPurchase.Expires;
+        existingPurchase.Upc = updatedPurchase.Upc;
+        existingPurchase.Model = updatedPurchase.Model;
+        existingPurchase.CardUsed = updatedPurchase.CardUsed;
+        existingPurchase.BoughtFrom = updatedPurchase.BoughtFrom;
+        existingPurchase.DeliveryStatus = updatedPurchase.DeliveryStatus;
+        existingPurchase.PaymentStatus = updatedPurchase.PaymentStatus;
+        existingPurchase.PaymentDate = updatedPurchase.PaymentDate;
+        existingPurchase.TrackingNumber = updatedPurchase.TrackingNumber;
+        existingPurchase.QuantityPaid = updatedPurchase.QuantityPaid;
+        existingPurchase.AmountPaid = updatedPurchase.AmountPaid;
+        // UserId stays as existingPurchase.UserId — don't let the client overwrite it
 
         await _context.SaveChangesAsync();
 
