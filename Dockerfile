@@ -1,17 +1,25 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /app
+
+# 1. Copy the entire repo into the container
 COPY . .
 
-# THIS LINE IS KEY: It will print your folder structure to the Render Logs
-RUN find . -maxdepth 4 -name "*.csproj"
+# 2. List the files so we can see them in the logs (for debugging)
+RUN ls -R
 
-# We use a wild-card restore so it finds the file regardless of the path
-RUN dotnet restore $(find . -name "*.csproj" -print -quit)
-RUN dotnet publish $(find . -name "*.csproj" -print -quit) -c Release -o /app/publish
+# 3. Try to restore using the FULL path from the root
+# Note: No variables, no find command. Just the hard path.
+RUN dotnet restore "Powerbuy/Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj"
 
+# 4. Build and Publish
+RUN dotnet publish "Powerbuy/Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj" -c Release -o out
+
+# 5. Final Stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-COPY --from=build /app/publish .
+COPY --from=build /app/out .
+
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
+
 ENTRYPOINT ["dotnet", "Powerbuy.Api.dll"]
