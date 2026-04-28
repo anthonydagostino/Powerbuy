@@ -1,5 +1,3 @@
-import { getAuthToken } from './authApi';
-
 const API_URL = 'https://powerbuy.onrender.com/api/Auth';
 
 const AUTH_TOKEN_KEY = 'authToken';
@@ -23,7 +21,7 @@ export function isAuthenticated() {
 }
 
 export async function register(email, password) {
-  const response = await fetch(+ '' + ${API_URL}/register+  '' + , {
+  const response = await fetch(`${API_URL}/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
@@ -40,7 +38,7 @@ export async function register(email, password) {
 }
 
 export async function login(email, password) {
-  const response = await fetch(+ '' + ${API_URL}/login+ '' + , {
+  const response = await fetch(`${API_URL}/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })

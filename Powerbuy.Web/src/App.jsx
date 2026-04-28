@@ -148,7 +148,7 @@ function App() {
       setLoading(true);
       setError("");
       if (isEditing) {
-        await updatePurchase(form.id, payload, token); // Pass token
+        await updatePurchase(form.id, { ...payload, id: form.id }, token);
       } else {
         await createPurchase(payload, token); // Pass token
       }
