@@ -1,27 +1,17 @@
-# Use .NET 8 SDK
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-
-# Copy the entire repository first
 COPY . .
 
-# Move specifically into the folder containing your .csproj
-# Based on your path: Powerbuy/Powerbuy.Api/Powerbuy.Api/
-WORKDIR "/src/Powerbuy/Powerbuy.Api/Powerbuy.Api"
+# THIS LINE IS KEY: It will print your folder structure to the Render Logs
+RUN find . -maxdepth 4 -name "*.csproj"
 
-# Restore dependencies for this specific project
-RUN dotnet restore "Powerbuy.Api.csproj"
+# We use a wild-card restore so it finds the file regardless of the path
+RUN dotnet restore $(find . -name "*.csproj" -print -quit)
+RUN dotnet publish $(find . -name "*.csproj" -print -quit) -c Release -o /app/publish
 
-# Publish the project
-RUN dotnet publish "Powerbuy.Api.csproj" -c Release -o /app/publish
-
-# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-
-# Render requirements
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
-
 ENTRYPOINT ["dotnet", "Powerbuy.Api.dll"]
