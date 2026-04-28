@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy EVERYTHING from the repo to ensure we have all files
+# Copy EVERYTHING from the repo to ensure we have all files 
 COPY . .
 
 # 1. Find the .csproj file automatically
