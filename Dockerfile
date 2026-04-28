@@ -1,17 +1,15 @@
+# Use stable .NET 8
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # 1. Copy everything
 COPY . .
 
-# 2. Find the project file and copy it directly to /src
-# This solves the "path not found" issue permanently
-RUN find . -name "*.csproj" -exec cp {} . \;
+# 2. Run publish directly on the specific file path
+# This combines restore and publish into one step to avoid path confusion
+RUN dotnet publish "Powerbuy.Api/Powerbuy.Api/Powerbuy.Api.csproj" -c Release -o /app/publish
 
-# 3. Build from the current directory (no paths needed)
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app/publish
-
+# Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
@@ -19,5 +17,4 @@ COPY --from=build /app/publish .
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-# Note: Ensure Powerbuy.Api.dll is the correct name of your output
 ENTRYPOINT ["dotnet", "Powerbuy.Api.dll"]
