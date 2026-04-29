@@ -10,5 +10,7 @@ public class User
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    public string? GoogleRefreshToken { get; set; }
+
     public ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 }

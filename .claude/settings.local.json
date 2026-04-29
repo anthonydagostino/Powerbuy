@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(winget upgrade *)",
+      "Bash(grep -E \"\\\\.\\(csproj|json\\)$\")",
+      "Bash(git *)",
+      "Bash(dotnet add *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet ef *)"
+    ]
+  }
+}

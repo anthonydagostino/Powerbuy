@@ -47,9 +47,11 @@ if (!string.IsNullOrEmpty(jwtSecret))
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ReceiptService>();
 builder.Services.AddScoped<PdfParserService>();
+builder.Services.AddScoped<GmailSyncService>();
 
 builder.Services.AddCors(options =>
 {

@@ -5,6 +5,7 @@ import PurchaseFilters from "./components/PurchaseFilters";
 import PurchaseForm from "./components/PurchaseForm";
 import PurchasesTable from "./components/PurchasesTable";
 import Auth from "./Auth";
+import GmailSync from "./components/GmailSync";
 import ReceiptUpload from "./components/ReceiptUpload";
 import {
   CURRENT_PROFIT_BASELINE_KEY,
@@ -249,6 +250,7 @@ function App() {
           </button>
         </div>
       </div>
+      <GmailSync token={token} onProcessed={loadPurchases} />
       <ReceiptUpload token={token} onProcessed={loadPurchases} />
 
       <PurchaseForm

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Powerbuy.Api.Data;
 using Powerbuy.Api.Dtos;
 
@@ -13,9 +13,9 @@ public class ReceiptService
         _context = context;
     }
 
-    public async Task<List<object>> ProcessReceiptAsync(ReceiptProcessRequest request, string userId)
+    public async Task<List<ReceiptMatchResult>> ProcessReceiptAsync(ReceiptProcessRequest request, string userId)
     {
-        var results = new List<object>();
+        var results = new List<ReceiptMatchResult>();
 
         foreach (var item in request.Items)
         {
@@ -32,14 +32,7 @@ public class ReceiptService
 
             if (purchase == null)
             {
-                results.Add(new
-                {
-                    item.Upc,
-                    item.Qty,
-                    item.Total,
-                    result = "No Match"
-                });
-
+                results.Add(new ReceiptMatchResult { Upc = item.Upc, Result = "No Match" });
                 continue;
             }
 
@@ -54,13 +47,13 @@ public class ReceiptService
                     purchase.QuantityPaid = item.Qty;
                     purchase.AmountPaid = item.Total;
 
-                    results.Add(new
+                    results.Add(new ReceiptMatchResult
                     {
-                        item.Upc,
-                        result = "Paid",
-                        purchase.Id,
-                        quantityPaid = purchase.QuantityPaid,
-                        amountPaid = purchase.AmountPaid
+                        Upc = item.Upc,
+                        Result = "Paid",
+                        PurchaseId = purchase.Id,
+                        QuantityPaid = purchase.QuantityPaid,
+                        AmountPaid = purchase.AmountPaid
                     });
                 }
                 else if (purchase.Quantity != item.Qty)
@@ -70,29 +63,28 @@ public class ReceiptService
                     purchase.QuantityPaid = item.Qty;
                     purchase.AmountPaid = item.Total;
 
-                    results.Add(new
+                    results.Add(new ReceiptMatchResult
                     {
-                        item.Upc,
-                        result = "Half",
-                        purchase.Id,
-                        quantityPaid = purchase.QuantityPaid,
-                        amountPaid = purchase.AmountPaid
+                        Upc = item.Upc,
+                        Result = "Half",
+                        PurchaseId = purchase.Id,
+                        QuantityPaid = purchase.QuantityPaid,
+                        AmountPaid = purchase.AmountPaid
                     });
                 }
                 else
                 {
                     purchase.PaymentStatus = "Issue";
                     purchase.PaymentDate = DateTime.UtcNow;
-                    purchase.QuantityPaid = item.Qty;
                     purchase.AmountPaid = item.Total;
 
-                    results.Add(new
+                    results.Add(new ReceiptMatchResult
                     {
-                        item.Upc,
-                        result = "Issue",
-                        purchase.Id,
-                        expectedSellPrice,
-                        amountPaid = purchase.AmountPaid
+                        Upc = item.Upc,
+                        Result = "Issue",
+                        PurchaseId = purchase.Id,
+                        ExpectedSellPrice = expectedSellPrice,
+                        AmountPaid = purchase.AmountPaid
                     });
                 }
             }
@@ -106,59 +98,51 @@ public class ReceiptService
                 {
                     purchase.PaymentStatus = "Half";
 
-                    results.Add(new
+                    results.Add(new ReceiptMatchResult
                     {
-                        item.Upc,
-                        result = "Half",
-                        purchase.Id,
-                        quantityPaid = purchase.QuantityPaid,
-                        amountPaid = purchase.AmountPaid
+                        Upc = item.Upc,
+                        Result = "Half",
+                        PurchaseId = purchase.Id,
+                        QuantityPaid = purchase.QuantityPaid,
+                        AmountPaid = purchase.AmountPaid
+                    });
+                }
+                else if (NearlyEqual(purchase.AmountPaid, expectedSellPrice))
+                {
+                    purchase.PaymentStatus = "Paid";
+
+                    results.Add(new ReceiptMatchResult
+                    {
+                        Upc = item.Upc,
+                        Result = "Paid",
+                        PurchaseId = purchase.Id,
+                        QuantityPaid = purchase.QuantityPaid,
+                        AmountPaid = purchase.AmountPaid
                     });
                 }
                 else
                 {
-                    if (NearlyEqual(purchase.AmountPaid, expectedSellPrice))
-                    {
-                        purchase.PaymentStatus = "Paid";
+                    purchase.PaymentStatus = "Issue";
 
-                        results.Add(new
-                        {
-                            item.Upc,
-                            result = "Paid",
-                            purchase.Id,
-                            quantityPaid = purchase.QuantityPaid,
-                            amountPaid = purchase.AmountPaid
-                        });
-                    }
-                    else
+                    results.Add(new ReceiptMatchResult
                     {
-                        purchase.PaymentStatus = "Issue";
-
-                        results.Add(new
-                        {
-                            item.Upc,
-                            result = "Issue",
-                            purchase.Id,
-                            expectedSellPrice,
-                            amountPaid = purchase.AmountPaid
-                        });
-                    }
+                        Upc = item.Upc,
+                        Result = "Issue",
+                        PurchaseId = purchase.Id,
+                        ExpectedSellPrice = expectedSellPrice,
+                        AmountPaid = purchase.AmountPaid
+                    });
                 }
             }
         }
 
         await _context.SaveChangesAsync();
-
         return results;
     }
 
-    private static string NormalizeDigits(string value)
-    {
-        return new string((value ?? string.Empty).Where(char.IsDigit).ToArray());
-    }
+    private static string NormalizeDigits(string value) =>
+        new string((value ?? string.Empty).Where(char.IsDigit).ToArray());
 
-    private static bool NearlyEqual(decimal a, decimal b, decimal epsilon = 0.01m)
-    {
-        return Math.Abs(a - b) < epsilon;
-    }
+    private static bool NearlyEqual(decimal a, decimal b, decimal epsilon = 0.01m) =>
+        Math.Abs(a - b) < epsilon;
 }
