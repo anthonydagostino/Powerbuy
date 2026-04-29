@@ -1,9 +1,34 @@
+const COLUMNS = [
+  { key: "id",             label: "Id" },
+  { key: "item",           label: "Item" },
+  { key: "upc",            label: "UPC" },
+  { key: "model",          label: "Model" },
+  { key: "quantity",       label: "Qty" },
+  { key: "totalAmazon",    label: "Total Amazon" },
+  { key: "sellPrice",      label: "Sell Price" },
+  { key: "expires",        label: "Expires" },
+  { key: "deliveryStatus", label: "Delivery" },
+  { key: "paymentStatus",  label: "Payment" },
+];
+
+function SortIndicator({ column, sortColumn, sortDirection }) {
+  if (sortColumn !== column) return <span className="sort-indicator sort-inactive">↕</span>;
+  return (
+    <span className="sort-indicator sort-active">
+      {sortDirection === "asc" ? "↑" : "↓"}
+    </span>
+  );
+}
+
 function PurchasesTable({
   filteredPurchases,
   getRowClassName,
   toDateInputValue,
   handleEditClick,
-  handleDeleteClick
+  handleDeleteClick,
+  sortColumn,
+  sortDirection,
+  onSort,
 }) {
   return (
     <>
@@ -11,16 +36,16 @@ function PurchasesTable({
         <table>
           <thead>
             <tr>
-              <th>Id</th>
-              <th>Item</th>
-              <th>UPC</th>
-              <th>Model</th>
-              <th>Qty</th>
-              <th>Total Amazon</th>
-              <th>Sell Price</th>
-              <th>Expires</th>
-              <th>Delivery</th>
-              <th>Payment</th>
+              {COLUMNS.map(({ key, label }) => (
+                <th
+                  key={key}
+                  className="sortable-th"
+                  onClick={() => onSort(key)}
+                >
+                  {label}
+                  <SortIndicator column={key} sortColumn={sortColumn} sortDirection={sortDirection} />
+                </th>
+              ))}
               <th>Actions</th>
             </tr>
           </thead>
