@@ -38,6 +38,8 @@ function App() {
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [filter, setFilter] = useState("ALL");
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortDirection, setSortDirection] = useState("asc");
   const [darkMode, setDarkMode] = useState(false);
   const [currentProfitBaseline, setCurrentProfitBaseline] = useState(() => {
     const saved = localStorage.getItem(CURRENT_PROFIT_BASELINE_KEY);
@@ -163,21 +165,44 @@ function App() {
     }
   }
 
-  // --- FILTER & MATH LOGIC (UNCHANGED) ---
-  const filteredPurchases = purchases.filter((purchase) => {
-    if (filter === "NOT_PAID") return purchase.paymentStatus === "Not Paid";
-    if (filter === "NOT_DELIVERED") return purchase.deliveryStatus === "Not Delivered";
-    if (filter === "REFUNDED") {
-      return (
-        purchase.paymentStatus === "Refunded" ||
-        purchase.deliveryStatus === "Refunded"
-      );
+  function handleSortChange(column) {
+    if (sortColumn === column) {
+      setSortDirection(d => d === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
     }
-    if (filter === "EXPIRING_SOON") {
-      return isExpiringSoon(purchase.expires) && purchase.deliveryStatus !== "Delivered";
-    }
-    return true;
-  });
+  }
+
+  // --- FILTER & SORT LOGIC ---
+  const filteredPurchases = useMemo(() => {
+    const filtered = purchases.filter((purchase) => {
+      if (filter === "NOT_PAID" && purchase.paymentStatus !== "Not Paid") return false;
+      if (filter === "NOT_DELIVERED" && purchase.deliveryStatus !== "Not Delivered") return false;
+      if (filter === "REFUNDED" && purchase.paymentStatus !== "Refunded" && purchase.deliveryStatus !== "Refunded") return false;
+      if (filter === "EXPIRING_SOON" && (!isExpiringSoon(purchase.expires) || purchase.deliveryStatus === "Delivered")) return false;
+      return true;
+    });
+
+    if (!sortColumn) return filtered;
+
+    return [...filtered].sort((a, b) => {
+      let aVal = a[sortColumn];
+      let bVal = b[sortColumn];
+
+      if (aVal == null) aVal = "";
+      if (bVal == null) bVal = "";
+
+      if (typeof aVal === "number" && typeof bVal === "number") {
+        return sortDirection === "asc" ? aVal - bVal : bVal - aVal;
+      }
+
+      const aStr = String(aVal).toLowerCase();
+      const bStr = String(bVal).toLowerCase();
+      const cmp = aStr < bStr ? -1 : aStr > bStr ? 1 : 0;
+      return sortDirection === "asc" ? cmp : -cmp;
+    });
+  }, [purchases, filter, sortColumn, sortDirection]);
 
   const totalExpectedProfit = purchases
     .filter(
@@ -282,6 +307,9 @@ function App() {
         toDateInputValue={toDateInputValue}
         handleEditClick={handleEditClick}
         handleDeleteClick={handleDeleteClick}
+        sortColumn={sortColumn}
+        sortDirection={sortDirection}
+        onSort={handleSortChange}
       />
     </div>
   );

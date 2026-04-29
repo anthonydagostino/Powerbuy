@@ -302,6 +302,29 @@ thead th {
   white-space: nowrap;
 }
 
+.sortable-th {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortable-th:hover {
+  background: #374151;
+}
+
+.sort-indicator {
+  margin-left: 0.35rem;
+  font-size: 0.7rem;
+}
+
+.sort-inactive {
+  opacity: 0.35;
+}
+
+.sort-active {
+  opacity: 1;
+  color: #93c5fd;
+}
+
 tbody td {
   padding: 0.65rem 0.75rem;
   border-bottom: 1px solid var(--border);
