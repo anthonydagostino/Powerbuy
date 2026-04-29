@@ -41,7 +41,7 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('powerbuy_dark') === 'true');
   const [currentProfitBaseline, setCurrentProfitBaseline] = useState(() => {
     const saved = localStorage.getItem(CURRENT_PROFIT_BASELINE_KEY);
     return saved ? Number(saved) : 0;
@@ -84,6 +84,7 @@ function App() {
     } else {
       document.body.classList.remove("dark");
     }
+    localStorage.setItem('powerbuy_dark', darkMode);
   }, [darkMode]);
 
   // --- FORM HANDLERS (UNCHANGED) ---
