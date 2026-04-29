@@ -52,6 +52,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ReceiptService>();
 builder.Services.AddScoped<PdfParserService>();
 builder.Services.AddScoped<GmailSyncService>();
+builder.Services.AddHostedService<GmailSyncBackgroundService>();
 
 builder.Services.AddCors(options =>
 {
