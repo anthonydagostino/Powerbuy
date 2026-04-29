@@ -38,6 +38,7 @@ function App() {
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [filter, setFilter] = useState("ALL");
+  const [searchQuery, setSearchQuery] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [currentProfitBaseline, setCurrentProfitBaseline] = useState(() => {
     const saved = localStorage.getItem(CURRENT_PROFIT_BASELINE_KEY);
@@ -165,17 +166,18 @@ function App() {
 
   // --- FILTER & MATH LOGIC (UNCHANGED) ---
   const filteredPurchases = purchases.filter((purchase) => {
-    if (filter === "NOT_PAID") return purchase.paymentStatus === "Not Paid";
-    if (filter === "NOT_DELIVERED") return purchase.deliveryStatus === "Not Delivered";
-    if (filter === "REFUNDED") {
-      return (
-        purchase.paymentStatus === "Refunded" ||
-        purchase.deliveryStatus === "Refunded"
-      );
+    if (filter === "NOT_PAID" && purchase.paymentStatus !== "Not Paid") return false;
+    if (filter === "NOT_DELIVERED" && purchase.deliveryStatus !== "Not Delivered") return false;
+    if (filter === "REFUNDED" && purchase.paymentStatus !== "Refunded" && purchase.deliveryStatus !== "Refunded") return false;
+    if (filter === "EXPIRING_SOON" && (!isExpiringSoon(purchase.expires) || purchase.deliveryStatus === "Delivered")) return false;
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const match = [purchase.item, purchase.upc, purchase.model]
+        .some(f => f?.toLowerCase().includes(q));
+      if (!match) return false;
     }
-    if (filter === "EXPIRING_SOON") {
-      return isExpiringSoon(purchase.expires) && purchase.deliveryStatus !== "Delivered";
-    }
+
     return true;
   });
 
@@ -275,6 +277,15 @@ function App() {
         handleResetCurrentProfit={handleResetCurrentProfit}
       />
       <h2>Purchases</h2>
+      <div className="search-bar-wrapper">
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search by item, UPC, or model..."
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+        />
+      </div>
       <PurchaseFilters setFilter={setFilter} />
       <PurchasesTable
         filteredPurchases={filteredPurchases}
