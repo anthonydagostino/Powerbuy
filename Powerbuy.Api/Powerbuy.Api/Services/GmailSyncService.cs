@@ -11,7 +11,7 @@ namespace Powerbuy.Api.Services;
 public class GmailSyncService
 {
     private const string GmailQuery =
-        "subject:\"Enclosed is your RECEIPT\" has:attachment filename:pdf -label:powerbuy-processed";
+        "subject:\"Enclosed is your RECEIPT\" has:attachment filename:pdf -label:powerbuy-processed-app";
 
     private readonly AppDbContext _context;
     private readonly IConfiguration _config;
@@ -107,9 +107,9 @@ public class GmailSyncService
         var accessToken = await RefreshAccessTokenAsync(user.GoogleRefreshToken);
         var http = _httpClientFactory.CreateClient();
 
-        var processedLabelId = await GetOrCreateLabelAsync(http, accessToken, "powerbuy-processed");
-        var halfLabelId = await GetOrCreateLabelAsync(http, accessToken, "powerbuy-half");
-        var issueLabelId = await GetOrCreateLabelAsync(http, accessToken, "powerbuy-issue");
+        var processedLabelId = await GetOrCreateLabelAsync(http, accessToken, "powerbuy-processed-app");
+        var halfLabelId = await GetOrCreateLabelAsync(http, accessToken, "powerbuy-half-app");
+        var issueLabelId = await GetOrCreateLabelAsync(http, accessToken, "powerbuy-issue-app");
 
         var threadIds = await ListThreadIdsAsync(http, accessToken, GmailQuery, 20);
 
