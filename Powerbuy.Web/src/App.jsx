@@ -7,6 +7,8 @@ import PurchasesTable from "./components/PurchasesTable";
 import Auth from "./Auth";
 import GmailSync from "./components/GmailSync";
 import ReceiptUpload from "./components/ReceiptUpload";
+import BookmarkletSetup from "./components/BookmarkletSetup";
+import PurchaseImportDialog from "./components/PurchaseImportDialog";
 import {
   CURRENT_PROFIT_BASELINE_KEY,
   emptyForm,
@@ -42,6 +44,7 @@ function App() {
   const [sortColumn, setSortColumn] = useState(null);
   const [sortDirection, setSortDirection] = useState("asc");
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('powerbuy_dark') === 'true');
+  const [importDeals, setImportDeals] = useState(null);
   const [currentProfitBaseline, setCurrentProfitBaseline] = useState(() => {
     const saved = localStorage.getItem(CURRENT_PROFIT_BASELINE_KEY);
     return saved ? Number(saved) : 0;
@@ -77,6 +80,18 @@ function App() {
   useEffect(() => {
     loadPurchases();
   }, [token]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const importParam = params.get('powerbuyImport');
+    if (importParam) {
+      try {
+        const decoded = JSON.parse(decodeURIComponent(atob(importParam)));
+        setImportDeals(decoded);
+      } catch {}
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   useEffect(() => {
     if (darkMode) {
@@ -287,6 +302,15 @@ function App() {
       </div>
       <GmailSync token={token} onProcessed={loadPurchases} />
       <ReceiptUpload token={token} onProcessed={loadPurchases} />
+      <BookmarkletSetup />
+      {importDeals && (
+        <PurchaseImportDialog
+          deals={importDeals}
+          token={token}
+          onConfirm={() => { setImportDeals(null); loadPurchases(); }}
+          onClose={() => setImportDeals(null)}
+        />
+      )}
 
       <PurchaseForm
         form={form}
