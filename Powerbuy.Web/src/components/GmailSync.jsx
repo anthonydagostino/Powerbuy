@@ -123,9 +123,11 @@ export default function GmailSync({ token, onProcessed }) {
       {results && (
         <div style={{ marginTop: '1rem' }}>
           <p style={{ margin: '0 0 0.5rem', fontWeight: 600, fontSize: '0.9rem' }}>
-            {results.threadsProcessed === 0
-              ? 'No new receipt emails found.'
-              : `Processed ${results.threadsProcessed} email thread${results.threadsProcessed !== 1 ? 's' : ''}`}
+            {results.threadsFound === 0
+              ? 'No matching receipt emails found in Gmail.'
+              : results.threadsProcessed === 0
+              ? `Found ${results.threadsFound} email${results.threadsFound !== 1 ? 's' : ''} but couldn't parse any receipts — PDF format may not match.`
+              : `Processed ${results.threadsProcessed} of ${results.threadsFound} email thread${results.threadsFound !== 1 ? 's' : ''}`}
           </p>
           {results.results.length > 0 && (
             <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.875rem', lineHeight: 2 }}>

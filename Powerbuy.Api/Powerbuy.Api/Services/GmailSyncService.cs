@@ -11,7 +11,7 @@ namespace Powerbuy.Api.Services;
 public class GmailSyncService
 {
     private const string GmailQuery =
-        "subject:\"Enclosed is your RECEIPT\" has:attachment filename:pdf -label:powerbuy-processed-app";
+        "subject:\"Enclosed is your RECEIPT\" has:attachment -label:powerbuy-processed-app";
 
     private readonly AppDbContext _context;
     private readonly IConfiguration _config;
@@ -160,7 +160,12 @@ public class GmailSyncService
             }
         }
 
-        return new GmailSyncResult { ThreadsProcessed = threadsProcessed, Results = allResults };
+        return new GmailSyncResult
+        {
+            ThreadsFound = threadIds.Count,
+            ThreadsProcessed = threadsProcessed,
+            Results = allResults
+        };
     }
 
     // ===== GMAIL REST HELPERS =====
@@ -346,6 +351,7 @@ public class GmailSyncService
 
 public class GmailSyncResult
 {
+    public int ThreadsFound { get; set; }
     public int ThreadsProcessed { get; set; }
     public List<ReceiptMatchResult> Results { get; set; } = new();
 }
