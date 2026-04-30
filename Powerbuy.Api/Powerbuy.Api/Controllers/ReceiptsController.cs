@@ -27,6 +27,26 @@ public class ReceiptsController : ControllerBase
         return Ok(results);
     }
 
+    [HttpPost("debug-pdf-text")]
+    public async Task<IActionResult> DebugPdfText(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("No file uploaded.");
+
+        using var ms = new MemoryStream();
+        await file.CopyToAsync(ms);
+
+        try
+        {
+            var text = _pdfParserService.ExtractText(ms.ToArray());
+            return Ok(new { text });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Failed to read PDF: {ex.Message}");
+        }
+    }
+
     [HttpPost("upload-pdf")]
     public async Task<IActionResult> UploadPdf(IFormFile file)
     {
