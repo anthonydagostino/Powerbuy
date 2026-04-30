@@ -43,6 +43,7 @@ public class ReceiptService
                 if (purchase.Quantity == item.Qty && NearlyEqual(expectedSellPrice, item.Total))
                 {
                     purchase.PaymentStatus = "Paid";
+                    purchase.DeliveryStatus = "Delivered";
                     purchase.PaymentDate = DateTime.UtcNow;
                     purchase.QuantityPaid = item.Qty;
                     purchase.AmountPaid = item.Total;
@@ -110,6 +111,7 @@ public class ReceiptService
                 else if (NearlyEqual(purchase.AmountPaid, expectedSellPrice))
                 {
                     purchase.PaymentStatus = "Paid";
+                    purchase.DeliveryStatus = "Delivered";
 
                     results.Add(new ReceiptMatchResult
                     {
