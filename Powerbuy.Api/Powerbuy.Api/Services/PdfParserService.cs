@@ -32,26 +32,21 @@ public class PdfParserService
 
         var items = new List<ReceiptItemDto>();
         var rowRegex = new Regex(
-            @"(\d+)\s+([A-Z0-9\-\/\[\]\. ]+?)\s+(\d{10,15})\s+\$([\d,]+\.\d{2})\s+\$([\d,]+\.\d{2})\s+\$([\d,]+\.\d{2})");
+            @"(\d+)\s+([A-Z0-9\-\/\[\]\. ]+?)\s+(\d{10,15})\s+(\d+)\s+\$([\d,]+\.\d{2})\s+\$([\d,]+\.\d{2})\s+\$([\d,]+\.\d{2})");
 
         foreach (Match match in rowRegex.Matches(tableText))
         {
             var title = match.Groups[2].Value.Trim();
             var upc = match.Groups[3].Value.Trim();
-            var unitPrice = ParseMoney(match.Groups[4].Value);
-            var total = ParseMoney(match.Groups[6].Value);
+            var qty = int.Parse(match.Groups[4].Value);
+            var unitPrice = ParseMoney(match.Groups[5].Value);
+            var total = ParseMoney(match.Groups[7].Value);
 
             if (Regex.IsMatch(title, @"TBA TRACKING|SERIALS", RegexOptions.IgnoreCase))
                 continue;
 
             if (unitPrice == 0 || total == 0)
                 continue;
-
-            var qty = (int)Math.Round(total / unitPrice);
-
-            // OCR sometimes appends the qty digit onto the end of the UPC
-            if (upc.Length >= 13 && upc.EndsWith(qty.ToString()))
-                upc = upc[..^1];
 
             items.Add(new ReceiptItemDto
             {
