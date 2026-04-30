@@ -14,6 +14,26 @@ export default function ReceiptUpload({ token, onProcessed }) {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState('');
+  const [debugText, setDebugText] = useState('');
+
+  async function handleDebug() {
+    if (!file) return;
+    setDebugText('');
+    setError('');
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/receipts/debug-pdf-text`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await res.json();
+      setDebugText(data.text ?? JSON.stringify(data));
+    } catch (err) {
+      setError(err.message);
+    }
+  }
 
   async function handleUpload(e) {
     e.preventDefault();
@@ -59,10 +79,22 @@ export default function ReceiptUpload({ token, onProcessed }) {
         <button type="submit" disabled={loading || !file} className="primary-button">
           {loading ? 'Processing...' : 'Process PDF'}
         </button>
+        <button type="button" disabled={!file} className="secondary-button" onClick={handleDebug}>
+          Debug PDF Text
+        </button>
       </form>
 
       {error && (
         <p style={{ color: '#ef4444', marginTop: '0.75rem', fontSize: '0.875rem' }}>{error}</p>
+      )}
+
+      {debugText && (
+        <div style={{ marginTop: '1rem' }}>
+          <p style={{ fontWeight: 600, fontSize: '0.9rem', margin: '0 0 0.5rem' }}>Raw extracted text:</p>
+          <pre style={{ background: 'var(--panel-bg, #f8fafc)', padding: '0.75rem', borderRadius: '6px', fontSize: '0.75rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word', maxHeight: '300px', overflowY: 'auto' }}>
+            {debugText}
+          </pre>
+        </div>
       )}
 
       {results && (
