@@ -20,7 +20,6 @@ export default function GmailSync({ token, onProcessed }) {
   const SCAN_OPTIONS = [
     { label: '1 day', days: 1 },
     { label: '3 days', days: 3 },
-    { label: '5 days', days: 5 },
     { label: '7 days', days: 7 },
     { label: '2 weeks', days: 14 },
     { label: '1 month', days: 30 },
@@ -125,13 +124,14 @@ export default function GmailSync({ token, onProcessed }) {
               onChange={e => setScanDays(Number(e.target.value))}
               disabled={syncing}
               style={{
-                fontSize: '0.875rem',
-                padding: '0.4rem 0.6rem',
+                fontSize: '0.75rem',
+                padding: '0.25rem 0.4rem',
                 borderRadius: '6px',
                 border: '1px solid var(--input-border)',
                 background: 'var(--input-bg)',
                 color: 'var(--text)',
                 cursor: 'pointer',
+                width: 'fit-content',
               }}
             >
               {SCAN_OPTIONS.map(opt => (
