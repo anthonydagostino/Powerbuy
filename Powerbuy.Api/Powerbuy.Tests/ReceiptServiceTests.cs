@@ -38,7 +38,8 @@ public class ReceiptServiceTests
             CardUsed = "Prime",
             BoughtFrom = "Amazon",
             OrderPlaced = DateTime.UtcNow,
-            Expires = DateTime.UtcNow.AddDays(7)
+            Expires = DateTime.UtcNow.AddDays(7),
+            UserId = "user-1"
         });
 
         await context.SaveChangesAsync();
@@ -59,7 +60,7 @@ public class ReceiptServiceTests
             }
         };
 
-        await service.ProcessReceiptAsync(request);
+        await service.ProcessReceiptAsync(request, "user-1");
 
         var purchase = await context.Purchases.FindAsync(1);
 
@@ -91,7 +92,8 @@ public class ReceiptServiceTests
             CardUsed = "Prime",
             BoughtFrom = "Amazon",
             OrderPlaced = DateTime.UtcNow,
-            Expires = DateTime.UtcNow.AddDays(7)
+            Expires = DateTime.UtcNow.AddDays(7),
+            UserId = "user-1"
         });
 
         await context.SaveChangesAsync();
@@ -112,7 +114,7 @@ public class ReceiptServiceTests
             }
         };
 
-        await service.ProcessReceiptAsync(request);
+        await service.ProcessReceiptAsync(request, "user-1");
 
         var purchase = await context.Purchases.FindAsync(1);
 
@@ -144,7 +146,8 @@ public class ReceiptServiceTests
             CardUsed = "Prime",
             BoughtFrom = "Amazon",
             OrderPlaced = DateTime.UtcNow,
-            Expires = DateTime.UtcNow.AddDays(7)
+            Expires = DateTime.UtcNow.AddDays(7),
+            UserId = "user-1"
         });
 
         await context.SaveChangesAsync();
@@ -165,7 +168,7 @@ public class ReceiptServiceTests
             }
         };
 
-        await service.ProcessReceiptAsync(request);
+        await service.ProcessReceiptAsync(request, "user-1");
 
         var purchase = await context.Purchases.FindAsync(1);
 
@@ -196,7 +199,8 @@ public class ReceiptServiceTests
             CardUsed = "Prime",
             BoughtFrom = "Amazon",
             OrderPlaced = DateTime.UtcNow,
-            Expires = DateTime.UtcNow.AddDays(7)
+            Expires = DateTime.UtcNow.AddDays(7),
+            UserId = "user-1"
         });
 
         await context.SaveChangesAsync();
@@ -217,7 +221,7 @@ public class ReceiptServiceTests
             }
         };
 
-        await service.ProcessReceiptAsync(request);
+        await service.ProcessReceiptAsync(request, "user-1");
 
         var purchase = await context.Purchases.FindAsync(1);
 

@@ -77,6 +77,7 @@ public class ReceiptService
                 {
                     purchase.PaymentStatus = "Issue";
                     purchase.PaymentDate = DateTime.UtcNow;
+                    purchase.QuantityPaid = item.Qty;
                     purchase.AmountPaid = item.Total;
 
                     results.Add(new ReceiptMatchResult

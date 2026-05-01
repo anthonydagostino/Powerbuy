@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { createPurchase } from '../services/purchasesApi';
-
-const today = new Date().toISOString().split('T')[0];
+import { buildPurchasePayload, calcProfit } from '../utils/bookmarkletCore';
 
 export default function PurchaseImportDialog({ deals, token, onConfirm, onClose }) {
   const [cashbackRate, setCashbackRate] = useState('5');
@@ -13,7 +12,7 @@ export default function PurchaseImportDialog({ deals, token, onConfirm, onClose 
     setError('');
     try {
       for (const deal of deals) {
-        await createPurchase(buildPayload(deal, cashbackRate), token);
+        await createPurchase(buildPurchasePayload(deal, cashbackRate), token);
       }
       onConfirm();
     } catch (err) {
@@ -53,8 +52,7 @@ export default function PurchaseImportDialog({ deals, token, onConfirm, onClose 
               {deals.map((deal, i) => {
                 const sell = deal.sellPricePerUnit * deal.qty;
                 const amazon = deal.totalAmazon;
-                const rate = Number(cashbackRate);
-                const profit = sell - amazon + amazon * (rate / 100);
+                const profit = calcProfit(deal, cashbackRate);
                 return (
                   <tr key={i} style={{ borderBottom: '1px solid var(--border, #e2e8f0)' }}>
                     <td style={{ padding: '8px' }}>
@@ -88,36 +86,3 @@ export default function PurchaseImportDialog({ deals, token, onConfirm, onClose 
   );
 }
 
-function buildPayload(deal, cashbackRate) {
-  const rate = Number(cashbackRate);
-  const sell = deal.sellPricePerUnit * deal.qty;
-  const total = deal.totalAmazon;
-  const cashback5 = rate === 5 ? total * 0.05 : 0;
-  const cashback6 = rate === 6 ? total * 0.06 : 0;
-  const cashback7 = rate === 7 ? total * 0.07 : 0;
-  const expires = deal.expires || today;
-
-  return {
-    item: deal.item,
-    upc: deal.upc,
-    model: deal.model,
-    totalAmazon: total,
-    sellPrice: sell,
-    cashback5Percent: cashback5,
-    cashback6Percent: cashback6,
-    cashback7Percent: cashback7,
-    profit5Percent: rate === 5 ? sell - total + cashback5 : 0,
-    profit6Percent: rate === 6 ? sell - total + cashback6 : 0,
-    profit7Percent: rate === 7 ? sell - total + cashback7 : 0,
-    orderPlaced: `${today}T00:00:00Z`,
-    quantity: deal.qty,
-    expires: `${expires}T00:00:00Z`,
-    cardUsed: 'Prime',
-    boughtFrom: 'Amazon',
-    deliveryStatus: 'Not Delivered',
-    paymentStatus: 'Not Paid',
-    paymentDate: null,
-    trackingNumber: null,
-    quantityPaid: 0,
-  };
-}
