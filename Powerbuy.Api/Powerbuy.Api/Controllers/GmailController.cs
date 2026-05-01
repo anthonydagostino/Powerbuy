@@ -77,12 +77,12 @@ public class GmailController : ControllerBase
 
     [HttpPost("process")]
     [Authorize]
-    public async Task<IActionResult> ProcessReceipts()
+    public async Task<IActionResult> ProcessReceipts([FromBody] ProcessReceiptsRequest? request)
     {
         try
         {
             var result = await _gmailSyncService.ProcessReceiptsAsync(
-                GetUserId(), _receiptService, _pdfParserService);
+                GetUserId(), _receiptService, _pdfParserService, request?.Days ?? 3);
             return Ok(result);
         }
         catch (InvalidOperationException ex) when (ex.Message.Contains("not connected"))
@@ -90,6 +90,8 @@ public class GmailController : ControllerBase
             return BadRequest(new { error = "Gmail not connected." });
         }
     }
+
+    public record ProcessReceiptsRequest(int Days = 3);
 
     [HttpPost("disconnect")]
     [Authorize]

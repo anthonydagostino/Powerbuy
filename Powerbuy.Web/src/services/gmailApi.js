@@ -16,10 +16,11 @@ export async function getGmailStatus(token) {
   return res.json();
 }
 
-export async function syncGmailReceipts(token) {
+export async function syncGmailReceipts(token, days = 3) {
   const res = await fetch(`${API_BASE_URL}/api/gmail/process`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}` }
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ days }),
   });
   if (!res.ok) throw new Error(await res.text() || `Error ${res.status}`);
   return res.json();

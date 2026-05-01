@@ -15,6 +15,16 @@ export default function GmailSync({ token, onProcessed }) {
   const [results, setResults] = useState(null);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [scanDays, setScanDays] = useState(3);
+
+  const SCAN_OPTIONS = [
+    { label: '1 day', days: 1 },
+    { label: '3 days', days: 3 },
+    { label: '5 days', days: 5 },
+    { label: '7 days', days: 7 },
+    { label: '2 weeks', days: 14 },
+    { label: '1 month', days: 30 },
+  ];
 
   useEffect(() => {
     // Handle OAuth redirect back from Google
@@ -57,7 +67,7 @@ export default function GmailSync({ token, onProcessed }) {
     setError('');
     setResults(null);
     try {
-      const data = await syncGmailReceipts(token);
+      const data = await syncGmailReceipts(token, scanDays);
       setResults(data);
       if (onProcessed) onProcessed();
     } catch (err) {
@@ -103,13 +113,31 @@ export default function GmailSync({ token, onProcessed }) {
         <p style={{ color: '#ef4444', fontSize: '0.875rem', margin: '0 0 0.75rem' }}>{error}</p>
       )}
 
-      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
         {!connected ? (
           <button className="primary-button" onClick={handleConnect}>
             Connect Gmail
           </button>
         ) : (
           <>
+            <select
+              value={scanDays}
+              onChange={e => setScanDays(Number(e.target.value))}
+              disabled={syncing}
+              style={{
+                fontSize: '0.875rem',
+                padding: '0.4rem 0.6rem',
+                borderRadius: '6px',
+                border: '1px solid var(--border, #e2e8f0)',
+                background: 'var(--surface, #fff)',
+                color: 'var(--text, #1e293b)',
+                cursor: 'pointer',
+              }}
+            >
+              {SCAN_OPTIONS.map(opt => (
+                <option key={opt.days} value={opt.days}>{opt.label}</option>
+              ))}
+            </select>
             <button className="primary-button" onClick={handleSync} disabled={syncing}>
               {syncing ? 'Scanning...' : 'Scan Gmail for Receipts'}
             </button>

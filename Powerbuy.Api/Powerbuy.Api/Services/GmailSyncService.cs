@@ -96,7 +96,8 @@ public class GmailSyncService
     public async Task<GmailSyncResult> ProcessReceiptsAsync(
         string userId,
         ReceiptService receiptService,
-        PdfParserService pdfParserService)
+        PdfParserService pdfParserService,
+        int days = 3)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId)
             ?? throw new InvalidOperationException("User not found.");
@@ -111,7 +112,9 @@ public class GmailSyncService
         var halfLabelId = await GetOrCreateLabelAsync(http, accessToken, "powerbuy-half-app");
         var issueLabelId = await GetOrCreateLabelAsync(http, accessToken, "powerbuy-issue-app");
 
-        var threadIds = await ListThreadIdsAsync(http, accessToken, GmailQuery, 20);
+        var afterDate = DateTime.UtcNow.AddDays(-days).ToString("yyyy/MM/dd");
+        var query = $"{GmailQuery} after:{afterDate}";
+        var threadIds = await ListThreadIdsAsync(http, accessToken, query, 50);
 
         var allResults = new List<ReceiptMatchResult>();
         var threadsProcessed = 0;
