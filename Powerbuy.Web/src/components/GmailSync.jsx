@@ -128,9 +128,9 @@ export default function GmailSync({ token, onProcessed }) {
                 fontSize: '0.875rem',
                 padding: '0.4rem 0.6rem',
                 borderRadius: '6px',
-                border: '1px solid var(--border, #e2e8f0)',
-                background: 'var(--surface, #fff)',
-                color: 'var(--text, #1e293b)',
+                border: '1px solid var(--input-border)',
+                background: 'var(--input-bg)',
+                color: 'var(--text)',
                 cursor: 'pointer',
               }}
             >
