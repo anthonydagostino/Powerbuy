@@ -197,12 +197,13 @@ test.describe('Bookmarklet — second click while monitoring', () => {
   test('does not show the monitoring toast again on second click', async ({ page }) => {
     await setupMockPage(page);
     await page.evaluate(getBookmarkletScript()); // first click
-    // Wait for toast to disappear
+    // Wait for the "Monitoring started" toast to disappear
     await page.waitForTimeout(3200);
     await page.evaluate(getBookmarkletScript()); // second click
 
-    // Should show "Already monitoring" toast, not "Monitoring started"
-    await expect(page.locator('text=Already monitoring')).toBeVisible();
+    // Button still present (second click pulses it rather than restarting)
+    await expect(page.locator('#pb-import-btn')).toBeVisible();
+    // "Monitoring started" toast must NOT reappear
     await expect(page.locator('text=Monitoring started')).not.toBeVisible();
   });
 });
@@ -216,9 +217,10 @@ test.describe('Bookmarklet — import dialog', () => {
     await page.evaluate(() => window.__changeCommitment('deal-1', 3));
     await page.locator('#pb-import-btn').click();
 
+    const dialog = page.locator('table');
     await expect(page.locator('text=Add Deals to Tracker')).toBeVisible();
-    await expect(page.locator('text=Apple Watch Black')).toBeVisible();
-    await expect(page.locator('text=Apple Watch Rose')).not.toBeVisible();
+    await expect(dialog.locator('text=Apple Watch Black')).toBeVisible();
+    await expect(dialog.locator('text=Apple Watch Rose')).not.toBeVisible();
   });
 
   test('dialog shows correct UPC for changed deal', async ({ page }) => {
@@ -227,8 +229,9 @@ test.describe('Bookmarklet — import dialog', () => {
     await page.evaluate(() => window.__changeCommitment('deal-1', 3));
     await page.locator('#pb-import-btn').click();
 
-    await expect(page.locator('text=111111111111')).toBeVisible();
-    await expect(page.locator('text=222222222222')).not.toBeVisible();
+    const dialog = page.locator('table');
+    await expect(dialog.locator('text=111111111111')).toBeVisible();
+    await expect(dialog.locator('text=222222222222')).not.toBeVisible();
   });
 
   test('dialog pre-fills qty with the changed value', async ({ page }) => {
@@ -250,8 +253,9 @@ test.describe('Bookmarklet — import dialog', () => {
     });
     await page.locator('#pb-import-btn').click();
 
-    await expect(page.locator('text=Apple Watch Black')).toBeVisible();
-    await expect(page.locator('text=Apple Watch Rose')).toBeVisible();
+    const dialog = page.locator('table');
+    await expect(dialog.locator('text=Apple Watch Black')).toBeVisible();
+    await expect(dialog.locator('text=Apple Watch Rose')).toBeVisible();
   });
 
   test('cancel button closes the dialog', async ({ page }) => {
