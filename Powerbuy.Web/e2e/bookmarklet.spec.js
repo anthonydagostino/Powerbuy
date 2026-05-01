@@ -17,25 +17,23 @@ async function setupMockPage(page, deals = MOCK_DEALS) {
      </div>`
   ).join('');
 
-  await page.setContent(`
-    <!DOCTYPE html>
+  const html = `<!DOCTYPE html>
     <html>
     <head><title>Mock Powerbuy</title></head>
     <body style="font-family:sans-serif;padding:20px">
       <h1>Powerbuy Deals</h1>
       ${rows}
     </body>
-    </html>
-  `);
+    </html>`;
+
+  // Serve the mock HTML at the real hostname so location.hostname is correct naturally
+  await page.route('https://powerbuynetwork.com/**', route =>
+    route.fulfill({ status: 200, contentType: 'text/html', body: html })
+  );
+  await page.goto('https://powerbuynetwork.com/deals');
 
   // Mock Angular scope and helpers
   await page.evaluate((dealsData) => {
-    // Override hostname check so the bookmarklet doesn't bail out
-    Object.defineProperty(window.location, 'hostname', {
-      get: () => 'powerbuynetwork.com',
-      configurable: true,
-    });
-
     const scopeMap = {};
     dealsData.forEach(d => {
       const scope = {
