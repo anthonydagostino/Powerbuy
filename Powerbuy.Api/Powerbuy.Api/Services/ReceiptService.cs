@@ -22,13 +22,15 @@ public class ReceiptService
             var normalizedUpc = NormalizeDigits(item.Upc);
 
             var candidatePurchases = await _context.Purchases
-                .Where(p => p.UserId == userId && (p.PaymentStatus == "Not Paid" || p.PaymentStatus == "Half"))
+                .Where(p => p.UserId == userId &&
+                            (p.PaymentStatus == "Not Paid" || p.PaymentStatus == "Half" || p.PaymentStatus == "Issue"))
                 .ToListAsync();
 
             var purchase = candidatePurchases
                 .Where(p => NormalizeDigits(p.Upc) == normalizedUpc)
                 .OrderBy(p => p.Id)
-                .FirstOrDefault(p => p.QuantityPaid < p.Quantity);
+                // For Not Paid / Issue entries QuantityPaid is unreliable; only gate on quantity for Half
+                .FirstOrDefault(p => p.PaymentStatus != "Half" || p.QuantityPaid < p.Quantity);
 
             if (purchase == null)
             {
@@ -38,7 +40,7 @@ public class ReceiptService
 
             var expectedSellPrice = purchase.SellPrice;
 
-            if (purchase.PaymentStatus == "Not Paid")
+            if (purchase.PaymentStatus == "Not Paid" || purchase.PaymentStatus == "Issue")
             {
                 if (purchase.Quantity == item.Qty && NearlyEqual(expectedSellPrice, item.Total))
                 {
