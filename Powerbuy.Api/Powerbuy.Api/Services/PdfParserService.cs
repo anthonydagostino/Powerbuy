@@ -32,7 +32,8 @@ public class PdfParserService
 
         var items = new List<ReceiptItemDto>();
         var rowRegex = new Regex(
-            @"(\d+)\s+([A-Z0-9\-\/\[\]\. ]+?)\s+(\d{10,15})\s+(\d+)\s+\$([\d,]+\.\d{2})\s+\$([\d,]+\.\d{2})\s+\$([\d,]+\.\d{2})");
+            @"(\d+)\s+([A-Z0-9\-\/\[\]\.\+\&\(\)\%\'\""#, ]+?)\s+(\d{10,15})\s+(\d+)\s+\$([\d,]+\.\d{2})\s+\$([\d,]+\.\d{2})\s+\$([\d,]+\.\d{2})",
+            RegexOptions.IgnoreCase);
 
         foreach (Match match in rowRegex.Matches(tableText))
         {
