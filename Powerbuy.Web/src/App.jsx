@@ -11,6 +11,7 @@ import BookmarkletSetup from "./components/BookmarkletSetup";
 import PurchaseImportDialog from "./components/PurchaseImportDialog";
 import {
   CURRENT_PROFIT_BASELINE_KEY,
+  EXPECTED_PROFIT_BASELINE_KEY,
   emptyForm,
   today
 } from "./constants";
@@ -47,6 +48,10 @@ function App() {
   const [importDeals, setImportDeals] = useState(null);
   const [currentProfitBaseline, setCurrentProfitBaseline] = useState(() => {
     const saved = localStorage.getItem(CURRENT_PROFIT_BASELINE_KEY);
+    return saved ? Number(saved) : 0;
+  });
+  const [expectedProfitBaseline, setExpectedProfitBaseline] = useState(() => {
+    const saved = localStorage.getItem(EXPECTED_PROFIT_BASELINE_KEY);
     return saved ? Number(saved) : 0;
   });
 
@@ -229,13 +234,15 @@ function App() {
     });
   }, [purchases, filter, searchQuery, sortColumn, sortDirection]);
 
-  const totalExpectedProfit = purchases
-    .filter(
-      (purchase) =>
-        purchase.paymentStatus !== "Refunded" &&
-        purchase.deliveryStatus !== "Refunded"
-    )
-    .reduce((sum, purchase) => sum + getStoredProfit(purchase), 0);
+  const totalExpectedProfit =
+    purchases
+      .filter(
+        (purchase) =>
+          purchase.paymentStatus !== "Refunded" &&
+          purchase.deliveryStatus !== "Refunded"
+      )
+      .reduce((sum, purchase) => sum + getStoredProfit(purchase), 0) -
+    expectedProfitBaseline;
 
   const allTimeProfit = purchases
     .filter(
@@ -258,8 +265,11 @@ function App() {
   ).length;
 
   function handleResetCurrentProfit() {
+    const newExpectedBaseline = expectedProfitBaseline + currentTotalProfit;
     localStorage.setItem(CURRENT_PROFIT_BASELINE_KEY, allTimeProfit.toString());
+    localStorage.setItem(EXPECTED_PROFIT_BASELINE_KEY, newExpectedBaseline.toString());
     setCurrentProfitBaseline(allTimeProfit);
+    setExpectedProfitBaseline(newExpectedBaseline);
   }
 
   const total = Number(form.totalAmazon) || 0;
