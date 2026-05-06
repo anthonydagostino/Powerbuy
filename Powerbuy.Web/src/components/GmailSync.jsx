@@ -168,7 +168,7 @@ export default function GmailSync({ token, onProcessed }) {
                   <strong style={{ color: RESULT_COLORS[r.result] ?? '#64748b' }}>{r.result}</strong>
                   {r.result === 'Half' && ` (qty paid: ${r.quantityPaid})`}
                   {r.result === 'Issue' && ` (expected $${r.expectedSellPrice?.toFixed(2)}, got $${r.amountPaid?.toFixed(2)})`}
-                  {r.result === 'No Match' && ` — not found in your purchases${r.note ? `: ${r.note}` : ''}`}
+                  {r.result === 'No Match' && ' — not found in your purchases'}
                 </li>
               ))}
             </ul>

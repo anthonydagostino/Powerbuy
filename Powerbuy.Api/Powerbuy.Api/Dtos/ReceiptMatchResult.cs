@@ -8,5 +8,4 @@ public class ReceiptMatchResult
     public int? QuantityPaid { get; set; }
     public decimal? AmountPaid { get; set; }
     public decimal? ExpectedSellPrice { get; set; }
-    public string? Note { get; set; }
 }

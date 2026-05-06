@@ -34,22 +34,7 @@ public class ReceiptService
 
             if (purchase == null)
             {
-                var allWithUpc = await _context.Purchases
-                    .Where(p => p.UserId == userId)
-                    .ToListAsync();
-                var upcMatches = allWithUpc
-                    .Where(p => NormalizeDigits(p.Upc) == normalizedUpc)
-                    .ToList();
-
-                string note;
-                if (!upcMatches.Any())
-                    note = $"No purchase found with normalized UPC '{normalizedUpc}' (extracted raw: '{item.Upc}')";
-                else
-                    note = $"UPC matched {upcMatches.Count} purchase(s) but none were eligible: " +
-                           string.Join("; ", upcMatches.Select(p =>
-                               $"id={p.Id} status={p.PaymentStatus} qty={p.Quantity} qtyPaid={p.QuantityPaid} storedUpc='{p.Upc}'"));
-
-                results.Add(new ReceiptMatchResult { Upc = item.Upc, Result = "No Match", Note = note });
+                results.Add(new ReceiptMatchResult { Upc = item.Upc, Result = "No Match" });
                 continue;
             }
 
