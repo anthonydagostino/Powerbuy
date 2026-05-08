@@ -4,7 +4,8 @@ function DashboardCards({
   currentTotalProfit,
   unpaidCount,
   notDeliveredCount,
-  handleResetCurrentProfit
+  handleResetCurrentProfit,
+  lastCashout
 }) {
   return (
     <div className="dashboard-grid">
@@ -24,6 +25,18 @@ function DashboardCards({
         <button onClick={handleResetCurrentProfit} className="secondary-button">
           Reset
         </button>
+      </div>
+
+      <div className="summary-card">
+        <strong>Last Cashout</strong>
+        {lastCashout ? (
+          <>
+            <div className="summary-value">${lastCashout.amount.toFixed(2)}</div>
+            <div className="summary-subtext">{lastCashout.date}</div>
+          </>
+        ) : (
+          <div className="summary-value">—</div>
+        )}
       </div>
 
       <div className="summary-card">

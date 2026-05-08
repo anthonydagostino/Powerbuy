@@ -302,6 +302,11 @@ body.dark .calculation-box strong {
   margin-bottom: 0.5rem;
 }
 
+.summary-subtext {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
 /* ===== TABLE ===== */
 .table-wrapper {
   overflow-x: auto;

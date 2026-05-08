@@ -2,6 +2,7 @@ export const today = new Date().toISOString().split("T")[0];
 
 export const CURRENT_PROFIT_BASELINE_KEY = "powerbuyCurrentProfitBaseline";
 export const EXPECTED_PROFIT_BASELINE_KEY = "powerbuyExpectedProfitBaseline";
+export const LAST_CASHOUT_KEY = "powerbuyLastCashout";
 
 export const emptyForm = {
   id: null,

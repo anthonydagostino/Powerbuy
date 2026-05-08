@@ -12,6 +12,7 @@ import PurchaseImportDialog from "./components/PurchaseImportDialog";
 import {
   CURRENT_PROFIT_BASELINE_KEY,
   EXPECTED_PROFIT_BASELINE_KEY,
+  LAST_CASHOUT_KEY,
   emptyForm,
   today
 } from "./constants";
@@ -53,6 +54,10 @@ function App() {
   const [expectedProfitBaseline, setExpectedProfitBaseline] = useState(() => {
     const saved = localStorage.getItem(EXPECTED_PROFIT_BASELINE_KEY);
     return saved ? Number(saved) : 0;
+  });
+  const [lastCashout, setLastCashout] = useState(() => {
+    const saved = localStorage.getItem(LAST_CASHOUT_KEY);
+    return saved ? JSON.parse(saved) : null;
   });
 
   // --- NEW AUTHENTICATION HANDLERS ---
@@ -266,10 +271,13 @@ function App() {
 
   function handleResetCurrentProfit() {
     const newExpectedBaseline = expectedProfitBaseline + currentTotalProfit;
+    const cashout = { amount: currentTotalProfit, date: today };
     localStorage.setItem(CURRENT_PROFIT_BASELINE_KEY, allTimeProfit.toString());
     localStorage.setItem(EXPECTED_PROFIT_BASELINE_KEY, newExpectedBaseline.toString());
+    localStorage.setItem(LAST_CASHOUT_KEY, JSON.stringify(cashout));
     setCurrentProfitBaseline(allTimeProfit);
     setExpectedProfitBaseline(newExpectedBaseline);
+    setLastCashout(cashout);
   }
 
   const total = Number(form.totalAmazon) || 0;
@@ -342,6 +350,7 @@ function App() {
         unpaidCount={unpaidCount}
         notDeliveredCount={notDeliveredCount}
         handleResetCurrentProfit={handleResetCurrentProfit}
+        lastCashout={lastCashout}
       />
       <h2>Purchases</h2>
       <div className="search-bar-wrapper">
