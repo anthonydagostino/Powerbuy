@@ -89,6 +89,10 @@ public class GmailController : ControllerBase
         {
             return BadRequest(new { error = "Gmail not connected." });
         }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     public record ProcessReceiptsRequest(int Days = 3);
