@@ -91,6 +91,10 @@ function PurchasesTable({
           Paid / Not Delivered
         </span>
         <span className="legend-item">
+          <span className="legend-dot" style={{ background: "#fed7aa" }} />
+          Delivered / Not Paid
+        </span>
+        <span className="legend-item">
           <span className="legend-dot" style={{ background: "#fff7ed" }} />
           Half Paid
         </span>

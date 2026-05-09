@@ -442,6 +442,11 @@ tbody tr:last-child td {
   color: #7c2d12;
 }
 
+.row-delivered-not-paid td {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
 .row-not-delivered td {
   background: #fef9c3;
   color: #713f12;
@@ -470,6 +475,11 @@ body.dark .row-paid-not-delivered td {
 
 body.dark .row-half td {
   background: #431407;
+  color: #fdba74;
+}
+
+body.dark .row-delivered-not-paid td {
+  background: #7c2d12;
   color: #fdba74;
 }
 

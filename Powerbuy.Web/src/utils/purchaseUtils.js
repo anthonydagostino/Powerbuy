@@ -56,6 +56,13 @@ export function getRowClassName(purchase) {
     return "row-expiring";
   }
 
+  if (
+    purchase.deliveryStatus === "Delivered" &&
+    purchase.paymentStatus === "Not Paid"
+  ) {
+    return "row-delivered-not-paid";
+  }
+
   if (purchase.paymentStatus === "Not Paid") {
     return "row-not-paid";
   }
