@@ -443,8 +443,8 @@ tbody tr:last-child td {
 }
 
 .row-delivered-not-paid td {
-  background: #fed7aa;
-  color: #9a3412;
+  background: #fb923c;
+  color: #431407;
 }
 
 .row-not-delivered td {
