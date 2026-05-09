@@ -91,7 +91,7 @@ function PurchasesTable({
           Paid / Not Delivered
         </span>
         <span className="legend-item">
-          <span className="legend-dot" style={{ background: "#fb923c" }} />
+          <span className="legend-dot" style={{ background: "#fde047" }} />
           Delivered / Not Paid
         </span>
         <span className="legend-item">
