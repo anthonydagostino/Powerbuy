@@ -5,7 +5,9 @@ function DashboardCards({
   unpaidCount,
   notDeliveredCount,
   handleResetCurrentProfit,
-  lastCashout
+  lastCashout,
+  negativeBalance,
+  onNegativeBalanceChange
 }) {
   return (
     <div className="dashboard-grid">
@@ -47,6 +49,21 @@ function DashboardCards({
       <div className="summary-card">
         <strong>Not Delivered Count</strong>
         <div className="summary-value">{notDeliveredCount}</div>
+      </div>
+
+      <div className="summary-card">
+        <strong>Negative Balance</strong>
+        <div className="summary-value" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <span>$</span>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            value={negativeBalance}
+            onChange={e => onNegativeBalanceChange(e.target.value)}
+            className="negative-balance-input"
+          />
+        </div>
       </div>
     </div>
   );

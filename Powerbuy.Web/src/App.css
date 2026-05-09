@@ -302,6 +302,23 @@ body.dark .calculation-box strong {
   margin-bottom: 0.5rem;
 }
 
+.negative-balance-input {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--border);
+  width: 90px;
+  text-align: left;
+  outline: none;
+  padding: 0;
+}
+
+.negative-balance-input:focus {
+  border-bottom-color: var(--primary, #6366f1);
+}
+
 .summary-subtext {
   font-size: 0.75rem;
   color: var(--muted);

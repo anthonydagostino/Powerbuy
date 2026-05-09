@@ -59,6 +59,16 @@ function App() {
     const saved = localStorage.getItem(LAST_CASHOUT_KEY);
     return saved ? JSON.parse(saved) : null;
   });
+  const [negativeBalance, setNegativeBalance] = useState(() => {
+    const saved = localStorage.getItem('powerbuy_negative_balance');
+    return saved ? Number(saved) : 0;
+  });
+
+  function handleNegativeBalanceChange(value) {
+    const num = Number(value) || 0;
+    setNegativeBalance(num);
+    localStorage.setItem('powerbuy_negative_balance', num);
+  }
 
   // --- NEW AUTHENTICATION HANDLERS ---
   const handleLoginSuccess = (newToken) => {
@@ -351,6 +361,8 @@ function App() {
         notDeliveredCount={notDeliveredCount}
         handleResetCurrentProfit={handleResetCurrentProfit}
         lastCashout={lastCashout}
+        negativeBalance={negativeBalance}
+        onNegativeBalanceChange={handleNegativeBalanceChange}
       />
       <h2>Purchases</h2>
       <div className="search-bar-wrapper">
