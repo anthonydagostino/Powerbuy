@@ -97,6 +97,26 @@ public class GmailController : ControllerBase
 
     public record ProcessReceiptsRequest(int Days = 3);
 
+    [HttpPost("backfill-email-dates")]
+    [Authorize]
+    public async Task<IActionResult> BackfillEmailDates()
+    {
+        try
+        {
+            var updated = await _gmailSyncService.BackfillEmailDatesAsync(
+                GetUserId(), _receiptService, _pdfParserService);
+            return Ok(new { updated });
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("not connected"))
+        {
+            return BadRequest(new { error = "Gmail not connected." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
     [HttpPost("disconnect")]
     [Authorize]
     public async Task<IActionResult> Disconnect()

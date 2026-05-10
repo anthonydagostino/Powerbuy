@@ -26,6 +26,15 @@ export async function syncGmailReceipts(token, days = 3) {
   return res.json();
 }
 
+export async function backfillEmailDates(token) {
+  const res = await fetch(`${API_BASE_URL}/api/gmail/backfill-email-dates`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw new Error(await res.text() || `Error ${res.status}`);
+  return res.json();
+}
+
 export async function disconnectGmail(token) {
   const res = await fetch(`${API_BASE_URL}/api/gmail/disconnect`, {
     method: 'POST',

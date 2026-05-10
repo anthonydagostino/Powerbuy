@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getGmailAuthUrl, getGmailStatus, syncGmailReceipts, disconnectGmail } from '../services/gmailApi';
+import { getGmailAuthUrl, getGmailStatus, syncGmailReceipts, disconnectGmail, backfillEmailDates } from '../services/gmailApi';
 
 const RESULT_COLORS = {
   Paid: '#16a34a',
@@ -12,6 +12,7 @@ export default function GmailSync({ token, onProcessed }) {
   const [connected, setConnected] = useState(false);
   const [statusLoading, setStatusLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [backfilling, setBackfilling] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -73,6 +74,20 @@ export default function GmailSync({ token, onProcessed }) {
       setError(err.message);
     } finally {
       setSyncing(false);
+    }
+  }
+
+  async function handleBackfill() {
+    setBackfilling(true);
+    setError('');
+    setSuccessMsg('');
+    try {
+      const data = await backfillEmailDates(token);
+      setSuccessMsg(`Backfill complete — updated ${data.updated} scan${data.updated !== 1 ? 's' : ''} with email date.`);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBackfilling(false);
     }
   }
 
@@ -138,8 +153,11 @@ export default function GmailSync({ token, onProcessed }) {
                 <option key={opt.days} value={opt.days}>{opt.label}</option>
               ))}
             </select>
-            <button className="primary-button" onClick={handleSync} disabled={syncing}>
+            <button className="primary-button" onClick={handleSync} disabled={syncing || backfilling}>
               {syncing ? 'Scanning...' : 'Scan Gmail for Receipts'}
+            </button>
+            <button className="secondary-button" onClick={handleBackfill} disabled={syncing || backfilling}>
+              {backfilling ? 'Backfilling...' : 'Backfill Email Dates'}
             </button>
             <button className="secondary-button" onClick={handleDisconnect}>
               Disconnect

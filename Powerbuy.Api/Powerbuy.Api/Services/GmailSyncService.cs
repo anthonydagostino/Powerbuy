@@ -171,6 +171,52 @@ public class GmailSyncService
         };
     }
 
+    public async Task<int> BackfillEmailDatesAsync(
+        string userId,
+        ReceiptService receiptService,
+        PdfParserService pdfParserService)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw new InvalidOperationException("User not found.");
+        if (string.IsNullOrEmpty(user.GoogleRefreshToken))
+            throw new InvalidOperationException("Gmail not connected.");
+
+        var accessToken = await RefreshAccessTokenAsync(user.GoogleRefreshToken);
+        var http = _httpClientFactory.CreateClient();
+
+        // Search already-processed receipt threads (those we labeled before)
+        var query = "label:powerbuy-processed-app subject:\"Enclosed is your RECEIPT\" has:attachment";
+        var threadIds = await ListThreadIdsAsync(http, accessToken, query, 500);
+
+        var scans = new List<(string Upc, DateTime EmailDate)>();
+
+        foreach (var threadId in threadIds)
+        {
+            var messageIds = await GetThreadMessageIdsAsync(http, accessToken, threadId);
+
+            foreach (var messageId in messageIds)
+            {
+                var (emailDate, pdfAttachments) = await GetPdfAttachmentsAsync(http, accessToken, messageId);
+                if (emailDate == null || pdfAttachments.Count == 0) continue;
+
+                foreach (var (_, attachmentId) in pdfAttachments)
+                {
+                    var pdfBytes = await GetAttachmentBytesAsync(http, accessToken, messageId, attachmentId);
+
+                    string text;
+                    try { text = pdfParserService.ExtractText(pdfBytes); }
+                    catch { continue; }
+
+                    var items = pdfParserService.ParseReceiptItems(text);
+                    foreach (var item in items)
+                        scans.Add((item.Upc, emailDate.Value));
+                }
+            }
+        }
+
+        return await receiptService.BackfillEmailDatesAsync(scans, userId);
+    }
+
     // ===== GMAIL REST HELPERS =====
 
     private async Task<string> RefreshAccessTokenAsync(string refreshToken)

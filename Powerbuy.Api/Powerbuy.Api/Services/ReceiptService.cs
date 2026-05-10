@@ -149,6 +149,32 @@ public class ReceiptService
         return results;
     }
 
+    public async Task<int> BackfillEmailDatesAsync(List<(string Upc, DateTime EmailDate)> scans, string userId)
+    {
+        var updated = 0;
+
+        var candidates = await _context.Purchases
+            .Where(p => p.UserId == userId && p.ReceiptEmailDate == null && p.PaymentStatus != "Not Paid")
+            .ToListAsync();
+
+        foreach (var (upc, emailDate) in scans)
+        {
+            var normalizedUpc = NormalizeDigits(upc);
+            var purchase = candidates
+                .Where(p => NormalizeDigits(p.Upc) == normalizedUpc)
+                .OrderBy(p => p.Id)
+                .FirstOrDefault();
+
+            if (purchase == null) continue;
+            purchase.ReceiptEmailDate = emailDate;
+            candidates.Remove(purchase);
+            updated++;
+        }
+
+        await _context.SaveChangesAsync();
+        return updated;
+    }
+
     private static string NormalizeDigits(string value) =>
         new string((value ?? string.Empty).Where(char.IsDigit).ToArray());
 
