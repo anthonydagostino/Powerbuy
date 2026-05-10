@@ -6,6 +6,7 @@ const COLUMNS = [
   { key: "quantity",       label: "Qty" },
   { key: "totalAmazon",    label: "Total Amazon" },
   { key: "sellPrice",      label: "Sell Price" },
+  { key: "orderPlaced",    label: "Purchase Date" },
   { key: "expires",        label: "Expires" },
   { key: "deliveryStatus", label: "Delivery" },
   { key: "paymentStatus",  label: "Payment" },
@@ -60,6 +61,7 @@ function PurchasesTable({
                 <td>{purchase.quantity}</td>
                 <td>{purchase.totalAmazon}</td>
                 <td>{purchase.sellPrice}</td>
+                <td>{toDateInputValue(purchase.orderPlaced)}</td>
                 <td>{toDateInputValue(purchase.expires)}</td>
                 <td>{purchase.deliveryStatus}</td>
                 <td>{purchase.paymentStatus}</td>
