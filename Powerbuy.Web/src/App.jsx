@@ -9,6 +9,7 @@ import GmailSync from "./components/GmailSync";
 import ReceiptUpload from "./components/ReceiptUpload";
 import BookmarkletSetup from "./components/BookmarkletSetup";
 import PurchaseImportDialog from "./components/PurchaseImportDialog";
+import UpcScanHistory from "./components/UpcScanHistory";
 import {
   CURRENT_PROFIT_BASELINE_KEY,
   EXPECTED_PROFIT_BASELINE_KEY,
@@ -59,6 +60,7 @@ function App() {
     const saved = localStorage.getItem(LAST_CASHOUT_KEY);
     return saved ? JSON.parse(saved) : null;
   });
+  const [showScanHistory, setShowScanHistory] = useState(false);
   const [negativeBalance, setNegativeBalance] = useState(() => {
     const saved = localStorage.getItem('powerbuy_negative_balance');
     return saved ? Number(saved) : 0;
@@ -315,11 +317,16 @@ function App() {
     <div className="app-container">
       <div className="page-header">
         <h1 className="page-title">Powerbuy Arbitrage Tracker</h1>
-        <div>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          <button
+            className="theme-button"
+            onClick={() => setShowScanHistory(true)}
+          >
+            Scan History
+          </button>
           <button
             className="theme-button"
             onClick={() => setDarkMode((current) => !current)}
-            style={{ marginRight: '10px' }}
           >
             {darkMode ? "Light Mode" : "Dark Mode"}
           </button>
@@ -384,6 +391,11 @@ function App() {
         sortColumn={sortColumn}
         sortDirection={sortDirection}
         onSort={handleSortChange}
+      />
+      <UpcScanHistory
+        purchases={purchases}
+        isOpen={showScanHistory}
+        onClose={() => setShowScanHistory(false)}
       />
     </div>
   );
