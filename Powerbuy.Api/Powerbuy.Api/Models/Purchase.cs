@@ -42,6 +42,8 @@ public class Purchase
 
     public DateTime? PaymentDate { get; set; }
 
+    public DateTime? ReceiptEmailDate { get; set; }
+
     public string? TrackingNumber { get; set; }
 
     public int QuantityPaid { get; set; }

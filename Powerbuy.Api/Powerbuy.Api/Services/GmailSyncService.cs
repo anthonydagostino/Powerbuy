@@ -126,7 +126,7 @@ public class GmailSyncService
 
             foreach (var messageId in messageIds)
             {
-                var pdfAttachments = await GetPdfAttachmentsAsync(http, accessToken, messageId);
+                var (emailDate, pdfAttachments) = await GetPdfAttachmentsAsync(http, accessToken, messageId);
 
                 foreach (var (_, attachmentId) in pdfAttachments)
                 {
@@ -140,7 +140,7 @@ public class GmailSyncService
                     if (items.Count == 0) continue;
 
                     var results = await receiptService.ProcessReceiptAsync(
-                        new ReceiptProcessRequest { Items = items }, userId);
+                        new ReceiptProcessRequest { Items = items, EmailDate = emailDate }, userId);
 
                     foreach (var r in results)
                     {
@@ -215,16 +215,26 @@ public class GmailSyncService
             .ToList();
     }
 
-    private static async Task<List<(string filename, string attachmentId)>> GetPdfAttachmentsAsync(
+    private static async Task<(DateTime? emailDate, List<(string filename, string attachmentId)>)> GetPdfAttachmentsAsync(
         HttpClient http, string accessToken, string messageId)
     {
         var url = $"https://gmail.googleapis.com/gmail/v1/users/me/messages/{messageId}?format=full";
         var json = await GmailGetAsync(http, accessToken, url);
 
+        DateTime? emailDate = null;
+        if (json.TryGetProperty("internalDate", out var internalDateEl))
+        {
+            var raw = internalDateEl.ValueKind == System.Text.Json.JsonValueKind.String
+                ? internalDateEl.GetString()
+                : internalDateEl.GetRawText();
+            if (long.TryParse(raw, out var ms))
+                emailDate = DateTimeOffset.FromUnixTimeMilliseconds(ms).UtcDateTime;
+        }
+
         var parts = new List<(string, string)>();
         if (json.TryGetProperty("payload", out var payload))
             CollectPdfParts(payload, parts);
-        return parts;
+        return (emailDate, parts);
     }
 
     private static void CollectPdfParts(JsonElement part, List<(string, string)> results)

@@ -3,6 +3,7 @@
 public class ReceiptProcessRequest
 {
     public List<ReceiptItemDto> Items { get; set; } = new();
+    public DateTime? EmailDate { get; set; }
 }
 
 public class ReceiptItemDto

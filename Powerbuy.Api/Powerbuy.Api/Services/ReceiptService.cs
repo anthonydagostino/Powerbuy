@@ -47,6 +47,7 @@ public class ReceiptService
                     purchase.PaymentStatus = "Paid";
                     purchase.DeliveryStatus = "Delivered";
                     purchase.PaymentDate = DateTime.UtcNow;
+                    purchase.ReceiptEmailDate = request.EmailDate;
                     purchase.QuantityPaid = item.Qty;
                     purchase.AmountPaid = item.Total;
 
@@ -63,6 +64,7 @@ public class ReceiptService
                 {
                     purchase.PaymentStatus = "Half";
                     purchase.PaymentDate = DateTime.UtcNow;
+                    purchase.ReceiptEmailDate = request.EmailDate;
                     purchase.QuantityPaid = item.Qty;
                     purchase.AmountPaid = item.Total;
 
@@ -79,6 +81,7 @@ public class ReceiptService
                 {
                     purchase.PaymentStatus = "Issue";
                     purchase.PaymentDate = DateTime.UtcNow;
+                    purchase.ReceiptEmailDate = request.EmailDate;
                     purchase.QuantityPaid = item.Qty;
                     purchase.AmountPaid = item.Total;
 
@@ -97,6 +100,7 @@ public class ReceiptService
                 purchase.QuantityPaid += item.Qty;
                 purchase.AmountPaid += item.Total;
                 purchase.PaymentDate = DateTime.UtcNow;
+                purchase.ReceiptEmailDate = request.EmailDate;
 
                 if (purchase.QuantityPaid < purchase.Quantity)
                 {

@@ -27,6 +27,11 @@ function formatDate(dateStr) {
   });
 }
 
+function formatEmailDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
 export default function UpcScanHistory({ purchases, isOpen, onClose }) {
   const [activeDays, setActiveDays] = useState(null);
 
@@ -78,7 +83,11 @@ export default function UpcScanHistory({ purchases, isOpen, onClose }) {
                 <div className="scan-history-upc">{p.upc}</div>
                 <div className="scan-history-item-name">{p.item}</div>
                 <div className="scan-history-meta">
-                  <span className="scan-history-date">{formatDate(p.paymentDate)}</span>
+                  <span className="scan-history-date">
+                    {p.receiptEmailDate
+                      ? `Email: ${formatEmailDate(p.receiptEmailDate)}`
+                      : `Processed: ${formatDate(p.paymentDate)}`}
+                  </span>
                   <span
                     className="scan-history-status"
                     style={{ color: STATUS_COLORS[p.paymentStatus] ?? '#64748b' }}
@@ -86,6 +95,11 @@ export default function UpcScanHistory({ purchases, isOpen, onClose }) {
                     {p.paymentStatus}
                   </span>
                 </div>
+                {p.receiptEmailDate && (
+                  <div className="scan-history-processed-date">
+                    Processed: {formatDate(p.paymentDate)}
+                  </div>
+                )}
               </div>
             ))
           )}
