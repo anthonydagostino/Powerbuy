@@ -9,6 +9,8 @@ function DashboardCards({
   negativeBalance,
   onNegativeBalanceChange
 }) {
+  const pendingProfit = totalExpectedProfit - currentTotalProfit;
+
   return (
     <div className="dashboard-grid">
       <div className="summary-card">
@@ -27,6 +29,11 @@ function DashboardCards({
         <button onClick={handleResetCurrentProfit} className="secondary-button">
           Reset
         </button>
+      </div>
+
+      <div className="summary-card">
+        <strong>Pending Profit</strong>
+        <div className="summary-value">${pendingProfit.toFixed(2)}</div>
       </div>
 
       <div className="summary-card">
