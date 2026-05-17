@@ -72,6 +72,7 @@ export default function GmailSync({ token, onProcessed }) {
       if (onProcessed) onProcessed();
     } catch (err) {
       setError(err.message);
+      if (err.status === 401) setConnected(false);
     } finally {
       setSyncing(false);
     }
@@ -86,6 +87,7 @@ export default function GmailSync({ token, onProcessed }) {
       setSuccessMsg(`Backfill complete — updated ${data.updated} scan${data.updated !== 1 ? 's' : ''} with email date.`);
     } catch (err) {
       setError(err.message);
+      if (err.status === 401) setConnected(false);
     } finally {
       setBackfilling(false);
     }

@@ -85,9 +85,9 @@ public class GmailController : ControllerBase
                 GetUserId(), _receiptService, _pdfParserService, request?.Days ?? 3);
             return Ok(result);
         }
-        catch (InvalidOperationException ex) when (ex.Message.Contains("not connected"))
+        catch (InvalidOperationException ex) when (ex.Message.Contains("not connected") || ex.Message.Contains("token expired") || ex.Message.Contains("revoked"))
         {
-            return BadRequest(new { error = "Gmail not connected." });
+            return Unauthorized(new { error = ex.Message });
         }
         catch (Exception ex)
         {
@@ -107,9 +107,9 @@ public class GmailController : ControllerBase
                 GetUserId(), _receiptService, _pdfParserService);
             return Ok(new { updated });
         }
-        catch (InvalidOperationException ex) when (ex.Message.Contains("not connected"))
+        catch (InvalidOperationException ex) when (ex.Message.Contains("not connected") || ex.Message.Contains("token expired") || ex.Message.Contains("revoked"))
         {
-            return BadRequest(new { error = "Gmail not connected." });
+            return Unauthorized(new { error = ex.Message });
         }
         catch (Exception ex)
         {

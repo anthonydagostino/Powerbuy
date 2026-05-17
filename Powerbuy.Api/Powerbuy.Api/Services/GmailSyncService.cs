@@ -230,7 +230,10 @@ public class GmailSyncService
                 ["client_secret"] = _config["Google:ClientSecret"]!,
                 ["grant_type"] = "refresh_token"
             }));
-        resp.EnsureSuccessStatusCode();
+
+        if (!resp.IsSuccessStatusCode)
+            throw new InvalidOperationException("Gmail token expired or revoked. Please reconnect Gmail.");
+
         var json = JsonDocument.Parse(await resp.Content.ReadAsStringAsync()).RootElement;
         return json.GetProperty("access_token").GetString()!;
     }

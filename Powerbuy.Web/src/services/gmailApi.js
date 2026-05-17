@@ -1,10 +1,20 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+async function parseError(res) {
+  const text = await res.text();
+  try {
+    const json = JSON.parse(text);
+    return json.error || text || `Error ${res.status}`;
+  } catch {
+    return text || `Error ${res.status}`;
+  }
+}
+
 export async function getGmailAuthUrl(token) {
   const res = await fetch(`${API_BASE_URL}/api/gmail/auth-url`, {
     headers: { Authorization: `Bearer ${token}` }
   });
-  if (!res.ok) throw new Error(await res.text() || `Error ${res.status}`);
+  if (!res.ok) throw new Error(await parseError(res));
   return res.json();
 }
 
@@ -22,7 +32,11 @@ export async function syncGmailReceipts(token, days = 3) {
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ days }),
   });
-  if (!res.ok) throw new Error(await res.text() || `Error ${res.status}`);
+  if (!res.ok) {
+    const err = new Error(await parseError(res));
+    err.status = res.status;
+    throw err;
+  }
   return res.json();
 }
 
@@ -31,7 +45,11 @@ export async function backfillEmailDates(token) {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) throw new Error(await res.text() || `Error ${res.status}`);
+  if (!res.ok) {
+    const err = new Error(await parseError(res));
+    err.status = res.status;
+    throw err;
+  }
   return res.json();
 }
 
