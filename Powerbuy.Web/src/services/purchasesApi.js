@@ -69,3 +69,23 @@ export async function deletePurchase(id, token) {
   });
   if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 }
+
+export async function getUserSettings(token) {
+  const res = await fetch(`${API_BASE_URL}/api/user/settings`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  return res.json();
+}
+
+export async function updateUserSettings(settings, token) {
+  const res = await fetch(`${API_BASE_URL}/api/user/settings`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(settings)
+  });
+  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+}

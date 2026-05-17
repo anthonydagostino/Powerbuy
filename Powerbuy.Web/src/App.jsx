@@ -21,7 +21,9 @@ import {
   createPurchase,
   deletePurchase,
   getPurchases,
-  updatePurchase
+  getUserSettings,
+  updatePurchase,
+  updateUserSettings
 } from "./services/purchasesApi";
 import {
   buildPurchasePayload,
@@ -61,15 +63,14 @@ function App() {
     return saved ? JSON.parse(saved) : null;
   });
   const [showScanHistory, setShowScanHistory] = useState(false);
-  const [negativeBalance, setNegativeBalance] = useState(() => {
-    const saved = localStorage.getItem('powerbuy_negative_balance');
-    return saved ? Number(saved) : 0;
-  });
+  const [negativeBalance, setNegativeBalance] = useState(0);
 
-  function handleNegativeBalanceChange(value) {
+  async function handleNegativeBalanceChange(value) {
     const num = Number(value) || 0;
     setNegativeBalance(num);
-    localStorage.setItem('powerbuy_negative_balance', num);
+    try {
+      await updateUserSettings({ negativeBalance: num }, token);
+    } catch {}
   }
 
   // --- NEW AUTHENTICATION HANDLERS ---
@@ -101,6 +102,13 @@ function App() {
   // Reload purchases whenever the token changes (like after login)
   useEffect(() => {
     loadPurchases();
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) return;
+    getUserSettings(token)
+      .then(s => setNegativeBalance(s.negativeBalance))
+      .catch(() => {});
   }, [token]);
 
   useEffect(() => {

@@ -12,5 +12,7 @@ public class User
 
     public string? GoogleRefreshToken { get; set; }
 
+    public decimal NegativeBalance { get; set; } = 0;
+
     public ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 }
