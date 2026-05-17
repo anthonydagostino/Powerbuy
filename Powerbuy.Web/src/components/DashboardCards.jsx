@@ -13,14 +13,14 @@ function DashboardCards({
 
   return (
     <div className="dashboard-grid">
-      <div className="summary-card">
-        <strong>Total Expected Profit</strong>
-        <div className="summary-value">${totalExpectedProfit.toFixed(2)}</div>
+      <div className="summary-card summary-card--hero">
+        <strong>All Time Profit</strong>
+        <div className="summary-value">${allTimeProfit.toFixed(2)}</div>
       </div>
 
       <div className="summary-card">
-        <strong>All Time Profit</strong>
-        <div className="summary-value">${allTimeProfit.toFixed(2)}</div>
+        <strong>Total Expected Profit</strong>
+        <div className="summary-value">${totalExpectedProfit.toFixed(2)}</div>
       </div>
 
       <div className="summary-card">
@@ -58,9 +58,9 @@ function DashboardCards({
         <div className="summary-value">{notDeliveredCount}</div>
       </div>
 
-      <div className="summary-card">
+      <div className="summary-card summary-card--wide">
         <strong>Negative Balance</strong>
-        <div className="summary-value" style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+        <div className="summary-value" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
           <span>$</span>
           <input
             type="number"

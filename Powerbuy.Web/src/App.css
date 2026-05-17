@@ -271,7 +271,7 @@ body.dark .calculation-box strong {
 /* ===== DASHBOARD CARDS ===== */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -283,6 +283,19 @@ body.dark .calculation-box strong {
   padding: 1.1rem 1rem;
   text-align: center;
   box-shadow: var(--shadow-sm);
+}
+
+.summary-card--hero {
+  grid-column: 1 / -1;
+  padding: 1.4rem 1rem;
+}
+
+.summary-card--hero .summary-value {
+  font-size: 2rem;
+}
+
+.summary-card--wide {
+  grid-column: span 2;
 }
 
 .summary-card strong {
