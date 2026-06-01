@@ -14,5 +14,13 @@ public class User
 
     public decimal NegativeBalance { get; set; } = 0;
 
+    public decimal CurrentProfitBaseline { get; set; } = 0;
+
+    public decimal ExpectedProfitBaseline { get; set; } = 0;
+
+    public decimal? LastCashoutAmount { get; set; }
+
+    public string? LastCashoutDate { get; set; }
+
     public ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 }

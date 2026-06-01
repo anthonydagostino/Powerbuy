@@ -25,7 +25,13 @@ public class UserController : ControllerBase
         var user = await _context.Users.FindAsync(userId);
         if (user == null) return NotFound();
 
-        return Ok(new UserSettingsResponse { NegativeBalance = user.NegativeBalance });
+        return Ok(new UserSettingsResponse {
+            NegativeBalance = user.NegativeBalance,
+            CurrentProfitBaseline = user.CurrentProfitBaseline,
+            ExpectedProfitBaseline = user.ExpectedProfitBaseline,
+            LastCashoutAmount = user.LastCashoutAmount,
+            LastCashoutDate = user.LastCashoutDate
+        });
     }
 
     [HttpPut("settings")]
@@ -36,6 +42,10 @@ public class UserController : ControllerBase
         if (user == null) return NotFound();
 
         user.NegativeBalance = request.NegativeBalance;
+        user.CurrentProfitBaseline = request.CurrentProfitBaseline;
+        user.ExpectedProfitBaseline = request.ExpectedProfitBaseline;
+        user.LastCashoutAmount = request.LastCashoutAmount;
+        user.LastCashoutDate = request.LastCashoutDate;
         await _context.SaveChangesAsync();
 
         return NoContent();
@@ -48,9 +58,17 @@ public class UserController : ControllerBase
 public class UserSettingsResponse
 {
     public decimal NegativeBalance { get; set; }
+    public decimal CurrentProfitBaseline { get; set; }
+    public decimal ExpectedProfitBaseline { get; set; }
+    public decimal? LastCashoutAmount { get; set; }
+    public string? LastCashoutDate { get; set; }
 }
 
 public class UserSettingsRequest
 {
     public decimal NegativeBalance { get; set; }
+    public decimal CurrentProfitBaseline { get; set; }
+    public decimal ExpectedProfitBaseline { get; set; }
+    public decimal? LastCashoutAmount { get; set; }
+    public string? LastCashoutDate { get; set; }
 }

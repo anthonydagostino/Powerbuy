@@ -11,9 +11,6 @@ import BookmarkletSetup from "./components/BookmarkletSetup";
 import PurchaseImportDialog from "./components/PurchaseImportDialog";
 import UpcScanHistory from "./components/UpcScanHistory";
 import {
-  CURRENT_PROFIT_BASELINE_KEY,
-  EXPECTED_PROFIT_BASELINE_KEY,
-  LAST_CASHOUT_KEY,
   emptyForm,
   today
 } from "./constants";
@@ -50,30 +47,23 @@ function App() {
   const [sortDirection, setSortDirection] = useState("asc");
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('powerbuy_dark') === 'true');
   const [importDeals, setImportDeals] = useState(null);
-  const [currentProfitBaseline, setCurrentProfitBaseline] = useState(() => {
-    const saved = localStorage.getItem(CURRENT_PROFIT_BASELINE_KEY);
-    return saved ? Number(saved) : 0;
-  });
-  const [expectedProfitBaseline, setExpectedProfitBaseline] = useState(() => {
-    const saved = localStorage.getItem(EXPECTED_PROFIT_BASELINE_KEY);
-    return saved ? Number(saved) : 0;
-  });
-  const [lastCashout, setLastCashout] = useState(() => {
-    const saved = localStorage.getItem(LAST_CASHOUT_KEY);
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [currentProfitBaseline, setCurrentProfitBaseline] = useState(0);
+  const [expectedProfitBaseline, setExpectedProfitBaseline] = useState(0);
+  const [lastCashout, setLastCashout] = useState(null);
   const [showScanHistory, setShowScanHistory] = useState(false);
-  const [negativeBalance, setNegativeBalance] = useState(() => {
-    const saved = localStorage.getItem('powerbuy_negative_balance');
-    return saved ? Number(saved) : 0;
-  });
+  const [negativeBalance, setNegativeBalance] = useState(0);
 
   async function handleNegativeBalanceChange(value) {
     const num = Number(value) || 0;
     setNegativeBalance(num);
-    localStorage.setItem('powerbuy_negative_balance', num);
     try {
-      await updateUserSettings({ negativeBalance: num }, token);
+      await updateUserSettings({
+        negativeBalance: num,
+        currentProfitBaseline,
+        expectedProfitBaseline,
+        lastCashoutAmount: lastCashout?.amount ?? null,
+        lastCashoutDate: lastCashout?.date ?? null
+      }, token);
     } catch {}
   }
 
@@ -113,7 +103,11 @@ function App() {
     getUserSettings(token)
       .then(s => {
         setNegativeBalance(s.negativeBalance);
-        localStorage.setItem('powerbuy_negative_balance', s.negativeBalance);
+        setCurrentProfitBaseline(s.currentProfitBaseline ?? 0);
+        setExpectedProfitBaseline(s.expectedProfitBaseline ?? 0);
+        if (s.lastCashoutAmount != null) {
+          setLastCashout({ amount: s.lastCashoutAmount, date: s.lastCashoutDate });
+        }
       })
       .catch(() => {});
   }, [token]);
@@ -296,15 +290,21 @@ function App() {
     (purchase) => purchase.deliveryStatus === "Not Delivered"
   ).length;
 
-  function handleResetCurrentProfit() {
+  async function handleResetCurrentProfit() {
     const newExpectedBaseline = expectedProfitBaseline + currentTotalProfit;
     const cashout = { amount: currentTotalProfit, date: today };
-    localStorage.setItem(CURRENT_PROFIT_BASELINE_KEY, allTimeProfit.toString());
-    localStorage.setItem(EXPECTED_PROFIT_BASELINE_KEY, newExpectedBaseline.toString());
-    localStorage.setItem(LAST_CASHOUT_KEY, JSON.stringify(cashout));
     setCurrentProfitBaseline(allTimeProfit);
     setExpectedProfitBaseline(newExpectedBaseline);
     setLastCashout(cashout);
+    try {
+      await updateUserSettings({
+        negativeBalance,
+        currentProfitBaseline: allTimeProfit,
+        expectedProfitBaseline: newExpectedBaseline,
+        lastCashoutAmount: currentTotalProfit,
+        lastCashoutDate: today
+      }, token);
+    } catch {}
   }
 
   const total = Number(form.totalAmazon) || 0;

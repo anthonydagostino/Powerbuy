@@ -129,7 +129,19 @@ namespace Powerbuy.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<decimal>("CurrentProfitBaseline")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("ExpectedProfitBaseline")
+                        .HasColumnType("numeric");
+
                     b.Property<string>("GoogleRefreshToken")
+                        .HasColumnType("text");
+
+                    b.Property<decimal?>("LastCashoutAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("LastCashoutDate")
                         .HasColumnType("text");
 
                     b.Property<decimal>("NegativeBalance")
