@@ -9,46 +9,50 @@ public class DataSeeder
     {
         try
         {
-            // Check if we've already migrated data
             if (!context.Database.CanConnect())
             {
                 await context.Database.EnsureCreatedAsync();
             }
 
-            // Only seed if Users table is empty
-            if (context.Users.Any())
+            if (!context.Users.Any())
             {
-                return; // Data already seeded
+                var personalUserEmail = configuration["Seeding:Email"] ?? "you@example.com";
+                var personalUserPassword = configuration["Seeding:Password"] ?? "ChangeMe123!";
+
+                var personalUser = new User
+                {
+                    Email = personalUserEmail,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(personalUserPassword)
+                };
+
+                context.Users.Add(personalUser);
+                await context.SaveChangesAsync();
+
+                var orphanedPurchases = context.Purchases
+                    .Where(p => p.UserId == string.Empty || p.UserId == null)
+                    .ToList();
+
+                foreach (var purchase in orphanedPurchases)
+                {
+                    purchase.UserId = personalUser.Id;
+                }
+
+                await context.SaveChangesAsync();
             }
 
-            // Create your personal account if it doesn't exist
-            var personalUserEmail = configuration["Seeding:Email"] ?? "you@example.com";
-            var personalUserPassword = configuration["Seeding:Password"] ?? "ChangeMe123!";
-
-            var personalUser = new User
+            // Restore known cashout data if it was lost
+            var user = context.Users.FirstOrDefault(u => u.Email == "anthonysdagostino@gmail.com");
+            if (user != null && user.LastCashoutAmount == null)
             {
-                Email = personalUserEmail,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(personalUserPassword)
-            };
-
-            context.Users.Add(personalUser);
-            await context.SaveChangesAsync();
-
-            // Associate all existing purchases (that don't have a UserId) with this account
-            var orphanedPurchases = context.Purchases
-                .Where(p => p.UserId == string.Empty || p.UserId == null)
-                .ToList();
-
-            foreach (var purchase in orphanedPurchases)
-            {
-                purchase.UserId = personalUser.Id;
+                user.LastCashoutAmount = 1650;
+                user.LastCashoutDate = "2026-05-15";
+                user.CurrentProfitBaseline = 1650;
+                user.ExpectedProfitBaseline = 1650;
+                await context.SaveChangesAsync();
             }
-
-            await context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            // Log seeding errors but don't crash the app
             Console.WriteLine($"Seeding error: {ex.Message}");
         }
     }
